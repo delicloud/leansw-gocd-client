@@ -10,24 +10,24 @@ import java.util.Map;
 public class PipelineHistory {
     private int id;
     @JsonProperty("build_cause")
-    private BuildCause buildCause;
-    private String name;
+    protected BuildCause buildCause;
+    protected String name;
     @JsonProperty("natural_order")
-    private Integer naturalOrder;
+    protected Integer naturalOrder;
     @JsonProperty("can_run")
-    private boolean canRun;
-    private String comment;
-    private List<Stage> stages = new ArrayList<>();
-    private int counter;
+    protected boolean canRun;
+    protected String comment;
+    protected List<Stage> stages = new ArrayList<>();
+    protected int counter;
 
     @JsonProperty("preparing_to_schedule")
-    private boolean preparingToSchedule;
-    private String label;
+    protected boolean preparingToSchedule;
+    protected String label;
 
-    private Date scheduledDate;
-    private transient Date completeTime;
-    private transient Long duration;
-    private transient Integer commitCount;
+    protected Date scheduledDate;
+    protected transient Date completeTime;
+    protected transient long duration;
+    protected transient int commitCount;
 
     private String result;
 
@@ -78,7 +78,7 @@ public class PipelineHistory {
         return this;
     }
 
-    public PipelineHistory setDuration(Long duration) {
+    public PipelineHistory setDuration(long duration) {
         this.duration = duration;
         return this;
     }
