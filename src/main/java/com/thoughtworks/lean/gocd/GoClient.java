@@ -27,6 +27,8 @@ public interface GoClient {
 
     Map<String, String> fetchJobProperties(String pipeline, int pipelineCounter, String stage, int stageCounter, String job);
 
+    Map<String, String> fetchJobProperties(JobParams jobParams);
+
     boolean pause(String pipeName);
 
     boolean resume(String pipeName);

@@ -1,16 +1,16 @@
 package com.thoughtworks.lean.gocd.impl;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.opencsv.CSVReader;
-import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
-import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
 import com.thoughtworks.lean.exception.ParseException;
 import com.thoughtworks.lean.gocd.GoClient;
+import com.thoughtworks.lean.gocd.JobParams;
 import com.thoughtworks.lean.gocd.dto.AgentInfo;
 import com.thoughtworks.lean.gocd.dto.AgentResourcesUpdateRequest;
 import com.thoughtworks.lean.gocd.dto.AgentStatusUpdateRequest;
 import com.thoughtworks.lean.gocd.dto.AgentsInfoResponse;
+import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
+import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
 import com.thoughtworks.lean.util.NumberUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -27,10 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.springframework.http.HttpMethod.*;
 
@@ -150,23 +147,39 @@ public class GoClientImpl implements GoClient {
         return response.getBody();
     }
 
+    @Override
+    public Map<String, String> fetchJobProperties(JobParams jobParams) {
+        Optional<Map<String, String>> ret = getJobPropsUriComponents(jobParams, "/properties/search?pipelineName={pipelineName}&stageName={stageName}&jobName={jobName}&limitPipeline={pipelineCounter}");
+        if (ret.isPresent()) {
+            return ret.get();
+        }
+
+        return getJobPropsUriComponents(jobParams, "/properties/{pipelineName}/{pipelineCounter}/{stageName}/{stageCounter}/{jobName}")
+                .orElse(new LinkedHashMap<>());
+    }
 
     @Override
     public Map<String, String> fetchJobProperties(String pipeline, int pipelineCounter, String stage, int stageCounter, String job) {
+
+        return fetchJobProperties(new JobParams(pipeline, pipelineCounter, stage, stageCounter, job));
+    }
+
+    private Optional<Map<String, String>> getJobPropsUriComponents(JobParams jobParams, String template) {
         HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
-        final UriComponents requestUri = UriComponentsBuilder.fromUriString(String.format("%s%s", baseURI, "/properties/{pipelineName}/{pipelineCounter}/{stageName}/{stageCounter}/{jobName}")
-                .replace("{pipelineName}", pipeline)
-                .replace("{pipelineCounter}", Integer.toString(pipelineCounter))
-                .replace("{stageName}", stage)
-                .replace("{stageCounter}", Integer.toString(stageCounter))
-                .replace("{jobName}", job)).build();
+        final UriComponents requestUri = UriComponentsBuilder.fromUriString(String.format("%s%s", baseURI, template)
+                .replace("{pipelineName}", jobParams.getPipeline())
+                .replace("{pipelineCounter}", Integer.toString(jobParams.getPipelineCounter()))
+                .replace("{stageName}", jobParams.getStage())
+                .replace("{stageCounter}", Integer.toString(jobParams.getStageCounter()))
+                .replace("{jobName}", jobParams.getJob())).build();
         try {
             ResponseEntity<String> response = new RestTemplate().exchange(requestUri.toUriString(), GET, request, String.class);
-            return parseJobCsv(response);
+            LOG.info(String.format("Successfully fetched properties:%s", requestUri.toUriString()));
+            return Optional.of(parseJobCsv(response));
         } catch (RestClientException e) {
-            LOG.error(String.format("error fetching properties:%s", requestUri.toUriString()), e);
-            return Maps.newHashMap();
+            LOG.warn(String.format("failed in fetching properties:%s", requestUri.toUriString()), e);
         }
+        return Optional.empty();
     }
 
     private Map<String, String> parseJobCsv(ResponseEntity<String> response) {
