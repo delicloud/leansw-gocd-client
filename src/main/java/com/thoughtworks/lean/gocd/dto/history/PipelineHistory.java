@@ -1,11 +1,15 @@
 package com.thoughtworks.lean.gocd.dto.history;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.thoughtworks.lean.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static com.thoughtworks.lean.util.CollectionsUtil.sumInt;
+import static com.thoughtworks.lean.util.CollectionsUtil.sumLong;
 
 public class PipelineHistory {
     private int id;
@@ -27,7 +31,9 @@ public class PipelineHistory {
     protected Date scheduledDate;
     protected transient Date completeTime;
     protected transient long duration;
-    protected transient int commitCount;
+    protected transient int commitsCount;
+
+    private boolean caculated;
 
     private String result;
 
@@ -60,12 +66,12 @@ public class PipelineHistory {
         return this;
     }
 
-    public Integer getCommitCount() {
-        return commitCount;
+    public int getCommitsCount() {
+        return commitsCount;
     }
 
-    public PipelineHistory setCommitCount(Integer commitCount) {
-        this.commitCount = commitCount;
+    public PipelineHistory setCommitsCount(Integer commitsCount) {
+        this.commitsCount = commitsCount;
         return this;
     }
 
@@ -170,14 +176,33 @@ public class PipelineHistory {
         return completeTime;
     }
 
-    public int getCommitsCount() {
-        return commitCount;
-    }
-
     public void setCompleteTime(Date completeTime) {
         this.completeTime = completeTime;
     }
 
+    public boolean isCaculated() {
+        return caculated;
+    }
+
+    public PipelineHistory setCommitCount(int commitCount) {
+        this.commitsCount = commitCount;
+        return this;
+    }
+
+    public PipelineHistory setCaculated(boolean caculated) {
+        this.caculated = caculated;
+        return this;
+    }
+
+    public void caculateProps() {
+        getStages().forEach(stage -> {
+            stage.caculateDuration();
+            stage.caculateCompleteTime();
+        });
+        setDuration(sumLong(getStages(), Stage::getDuration));
+        setCompleteTime(DateUtil.maxOrNull(getStages().stream().map(Stage::getCompleteTime)));
+        setCommitsCount(sumInt(getBuildCause().getMaterialRevisions(), e -> e.getModifications().size()));
+    }
     @Override
     public String toString() {
         return "PipelineHistory{" +

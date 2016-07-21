@@ -1,10 +1,13 @@
 package com.thoughtworks.lean.gocd.dto.history;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.thoughtworks.lean.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.thoughtworks.lean.util.CollectionsUtil.sumLong;
 
 public class Stage {
 
@@ -24,7 +27,7 @@ public class Stage {
     @JsonProperty("rerun_of_counter")
     private Integer rerunOfCounter;
     private boolean scheduled;
-    private transient Long duration;
+    private transient long duration;
     private transient Date completeTime;
 
     public String getName() {
@@ -115,9 +118,18 @@ public class Stage {
         this.scheduled = scheduled;
     }
 
-
     public long getDuration() {
         return duration;
+    }
+
+    public Stage setDuration(long duration) {
+        this.duration = duration;
+        return this;
+    }
+
+    public Stage setCompleteTime(Date completeTime) {
+        this.completeTime = completeTime;
+        return this;
     }
 
     public Date getCompleteTime() {
@@ -125,4 +137,13 @@ public class Stage {
     }
 
 
+    public void caculateDuration() {
+        getJobs().forEach(Job::caculateDuration);
+        setDuration(sumLong(getJobs(),Job::getDuration));
+    }
+
+    public void caculateCompleteTime() {
+        getJobs().forEach(Job::caculateCompleteTime);
+        setCompleteTime(DateUtil.maxOrNull(getJobs().stream().map(Job::getCompleteDate)));
+    }
 }

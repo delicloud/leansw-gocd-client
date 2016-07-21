@@ -20,7 +20,7 @@ public class Job {
     private Date scheduledDate;
     private Map<String, String> properties = Maps.newHashMap();
     private transient Date completeDate;
-    private transient Integer duration;
+    private transient int duration;
 
     public String getName() {
         return name;
@@ -71,18 +71,21 @@ public class Job {
     }
 
     public int getDuration() {
-        if (null == duration) {
-            final String durationString = this.getProperties().get(Job.CRUISE_JOB_DURATION);
-            duration = StringUtils.isNotBlank(durationString) ? Integer.parseInt(durationString) : 0;
-        }
         return duration;
     }
 
     public Date getCompleteDate() {
-        if (null == completeDate) {
-            completeDate = new DateTime(getScheduledDate().getTime() + getDuration()).toDate();
-        }
         return completeDate;
     }
 
+    public void caculateDuration() {
+        final String durationString = this.getProperties().get(Job.CRUISE_JOB_DURATION);
+        duration = StringUtils.isNotBlank(durationString) ? Integer.parseInt(durationString) : 0;
+    }
+
+    public void caculateCompleteTime() {
+        if (null == completeDate) {
+            completeDate = new DateTime(getScheduledDate().getTime() + getDuration()).toDate();
+        }
+    }
 }
