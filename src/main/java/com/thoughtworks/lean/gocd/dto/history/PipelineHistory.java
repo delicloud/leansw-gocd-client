@@ -194,7 +194,11 @@ public class PipelineHistory {
         return this;
     }
 
+
     public void caculateProps() {
+        if (isCaculated()){
+            return;
+        }
         getStages().forEach(stage -> {
             stage.caculateDuration();
             stage.caculateCompleteTime();
@@ -202,6 +206,7 @@ public class PipelineHistory {
         setDuration(sumLong(getStages(), Stage::getDuration));
         setCompleteTime(DateUtil.maxOrNull(getStages().stream().map(Stage::getCompleteTime)));
         setCommitsCount(sumInt(getBuildCause().getMaterialRevisions(), e -> e.getModifications().size()));
+        setCaculated(true);
     }
     @Override
     public String toString() {
