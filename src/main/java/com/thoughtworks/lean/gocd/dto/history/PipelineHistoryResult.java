@@ -1,5 +1,7 @@
 package com.thoughtworks.lean.gocd.dto.history;
 
+import com.thoughtworks.lean.common.Pagination;
+
 import java.util.ArrayList;
 import java.util.List;
 
