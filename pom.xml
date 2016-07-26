@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-starter-parent</artifactId>
-    <version>Brixton.RC1</version>
+    <version>Brixton.SR1</version>
   </parent>
 
   <name>leansw-gocd-agent</name>
