@@ -11,7 +11,7 @@ import java.util.Set;
 public interface GoClient {
 
 
-    PipelineHistoryResult getPipelineHistory(String pipelineName, int offset);
+    PipelineHistoryResult getPipelineHistoryResult(String pipelineName, int offset);
 
     String getPipelineConfiguration(String pipelineName);
 

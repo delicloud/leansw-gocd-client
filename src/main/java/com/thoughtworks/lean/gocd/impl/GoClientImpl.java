@@ -116,11 +116,33 @@ public class GoClientImpl implements GoClient {
 
     @Override
     @Cacheable("gocd_pipelineHistoryResult")
-    public PipelineHistoryResult getPipelineHistory(String pipelineName, int offset) {
+    public PipelineHistoryResult getPipelineHistoryResult(String pipelineName, int offset) {
         HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
         String requestUrl = String.format("%s%s/%s/history/%s", baseURI, PIPELINES, pipelineName, offset);
         ResponseEntity<PipelineHistoryResult> response = new RestTemplate().exchange(requestUrl, HttpMethod.GET, request, PipelineHistoryResult.class);
+        response.getBody().getPipelines().stream().forEach(this::updateJobProperties);
         return response.getBody();
+    }
+
+//    @Override
+//    @Cacheable("gocd_pipelineHistory")
+//    public PipelineHistoryResult getPipelineHistory(String pipeline, int offset) {
+//        PipelineHistoryResult pipelineHistoryResult = this.getPipelineHistoryResult(pipeline,offset);
+//        pipelineHistoryResult.getPipelines().stream().forEach(this::updateJobProperties);
+//    }
+
+    private PipelineHistory updateJobProperties(PipelineHistory pipelineHistory) {
+        pipelineHistory.getStages().stream().forEach(
+                stage -> stage.getJobs().stream().filter(job -> job.getResult() != null)
+                        .forEach(job -> job.setProperties(this.fetchJobProperties(
+                                pipelineHistory.getName(),
+                                pipelineHistory.getCounter(),
+                                stage.getName(),
+                                stage.getCounter(),
+                                job.getName())
+                        ))
+        );
+        return pipelineHistory;
     }
 
     public String getPipelineConfiguration(String pipelineName) {
