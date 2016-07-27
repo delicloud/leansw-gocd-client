@@ -3,11 +3,10 @@ package com.thoughtworks.lean.gocd.dto.history;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.lean.util.DateUtil;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static com.thoughtworks.lean.gocd.dto.history.BuildStatus.Passed;
+import static com.thoughtworks.lean.gocd.dto.history.BuildStatus.Unknown;
 import static com.thoughtworks.lean.util.CollectionsUtil.sumInt;
 import static com.thoughtworks.lean.util.CollectionsUtil.sumLong;
 
@@ -199,12 +198,23 @@ public class PipelineHistory {
         if (isCaculated()){
             return;
         }
-        getStages().forEach(stage -> {
+        List<Stage> stages = getStages();
+
+        stages.forEach(stage -> {
             stage.caculateDuration();
             stage.caculateCompleteTime();
         });
-        setDuration(sumLong(getStages(), Stage::getDuration));
-        setCompleteTime(DateUtil.maxOrNull(getStages().stream().map(Stage::getCompleteTime)));
+        if (!stages.isEmpty() && !stages.get(0).getJobs().isEmpty()) {
+            setScheduledDate(stages.get(0).getJobs().get(0).getScheduledDate());
+            final Optional<Stage> stage = getStages().stream().filter(history -> !Passed.name().equalsIgnoreCase(history.getResult())).findFirst();
+            if (stage.isPresent()) {
+                setResult(stage.get().getResult() == null ? Unknown.name() : stage.get().getResult());
+            } else {
+                setResult(Passed.name());
+            }
+        }
+        setDuration(sumLong(stages, Stage::getDuration));
+        setCompleteTime(DateUtil.maxOrNull(stages.stream().map(Stage::getCompleteTime)));
         setCommitsCount(sumInt(getBuildCause().getMaterialRevisions(), e -> e.getModifications().size()));
         setCaculated(true);
     }

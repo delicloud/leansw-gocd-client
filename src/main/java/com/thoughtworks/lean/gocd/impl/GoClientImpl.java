@@ -116,22 +116,20 @@ public class GoClientImpl implements GoClient {
 
     @Override
     @Cacheable("gocd_pipelineHistoryResult")
-    public PipelineHistoryResult getPipelineHistoryResult(String pipelineName, int offset) {
+    public PipelineHistoryResult getPipelineHistory(String pipelineName, int offset) {
         HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
         String requestUrl = String.format("%s%s/%s/history/%s", baseURI, PIPELINES, pipelineName, offset);
         ResponseEntity<PipelineHistoryResult> response = new RestTemplate().exchange(requestUrl, HttpMethod.GET, request, PipelineHistoryResult.class);
-        response.getBody().getPipelines().stream().forEach(this::updateJobProperties);
+        response.getBody().getPipelines().stream().forEach(this::completePipelineHistory);
         return response.getBody();
     }
 
-//    @Override
-//    @Cacheable("gocd_pipelineHistory")
-//    public PipelineHistoryResult getPipelineHistory(String pipeline, int offset) {
-//        PipelineHistoryResult pipelineHistoryResult = this.getPipelineHistoryResult(pipeline,offset);
-//        pipelineHistoryResult.getPipelines().stream().forEach(this::updateJobProperties);
-//    }
+    private void completePipelineHistory(PipelineHistory pipelineHistory) {
+        this.updateJobProperties(pipelineHistory);
+        pipelineHistory.caculateProps();
+    }
 
-    private PipelineHistory updateJobProperties(PipelineHistory pipelineHistory) {
+    private void updateJobProperties(PipelineHistory pipelineHistory) {
         pipelineHistory.getStages().stream().forEach(
                 stage -> stage.getJobs().stream().filter(job -> job.getResult() != null)
                         .forEach(job -> job.setProperties(this.fetchJobProperties(
@@ -142,7 +140,6 @@ public class GoClientImpl implements GoClient {
                                 job.getName())
                         ))
         );
-        return pipelineHistory;
     }
 
     public String getPipelineConfiguration(String pipelineName) {
@@ -166,6 +163,7 @@ public class GoClientImpl implements GoClient {
         HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
         final String requestUrl = String.format("%s%s/%s/instance/%s", baseURI, PIPELINES, pipelineName, counter);
         ResponseEntity<PipelineHistory> response = new RestTemplate().exchange(requestUrl, GET, request, PipelineHistory.class);
+        this.completePipelineHistory(response.getBody());
         return response.getBody();
     }
 

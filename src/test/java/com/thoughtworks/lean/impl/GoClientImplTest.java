@@ -1,8 +1,10 @@
 package com.thoughtworks.lean.impl;
 
+import com.thoughtworks.lean.gocd.dto.history.Job;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.AgentInfo;
 import com.thoughtworks.lean.gocd.dto.AgentsInfoResponse;
+import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
 import com.thoughtworks.lean.gocd.impl.GoClientImpl;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -13,8 +15,7 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class GoClientImplTest {
 
@@ -35,8 +36,11 @@ public class GoClientImplTest {
 
     @Test
     public void should_fetch_pipeline_instance() {
-        PipelineHistory configuration = goClient.getPipelineInstance("cd-metrics-ui", 1);
+        PipelineHistory pipelineHistory = goClient.getPipelineInstance("cd-metrics-ui", 1);
         //System.out.println(configuration.toString());
+        assertNotNull(pipelineHistory);
+        assertTrue(pipelineHistory.getDuration() > 0);
+        assertNotNull(pipelineHistory.getResult());
     }
 
     @Ignore
@@ -80,6 +84,20 @@ public class GoClientImplTest {
         assertTrue(agentsInfoResponse.getEmbedded().getAgents().size() > 0);
     }
 
+    @Test
+    public void should_get_correct_pipeline_history_result() {
+
+        PipelineHistoryResult result = goClient.getPipelineHistory("cd-metrics-ui", 0);
+        Job firstJob = result.getPipelines().get(0).getStages().get(0).getJobs().get(0);
+        assertNotNull(firstJob);
+        assertTrue(firstJob.getProperties().size() > 0);
+
+        PipelineHistory firstPipeline = result.getPipelines().get(0);
+        assertNotNull(firstPipeline);
+        assertTrue(firstPipeline.getDuration() > 0);
+        assertNotNull(firstPipeline.getResult());
+    }
+
     @Ignore
     @Test
     public void should_trigger_pipeline_test_pipeline_1() {
@@ -97,6 +115,7 @@ public class GoClientImplTest {
     public void should_unpause_pipeline_test_pipeline_1() {
         goClient.resume("test-pipeline-1");
     }
+
 
 
 }

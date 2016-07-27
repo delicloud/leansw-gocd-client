@@ -1,9 +1,9 @@
 package com.thoughtworks.lean.gocd;
 
-import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
-import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
 import com.thoughtworks.lean.gocd.dto.AgentInfo;
 import com.thoughtworks.lean.gocd.dto.AgentsInfoResponse;
+import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
+import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +11,7 @@ import java.util.Set;
 public interface GoClient {
 
 
-    PipelineHistoryResult getPipelineHistoryResult(String pipelineName, int offset);
+    PipelineHistoryResult getPipelineHistory(String pipelineName, int offset);
 
     String getPipelineConfiguration(String pipelineName);
 
