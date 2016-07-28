@@ -1,5 +1,6 @@
 package com.thoughtworks.lean.impl;
 
+import com.thoughtworks.lean.gocd.dto.PipelineStatus;
 import com.thoughtworks.lean.gocd.dto.history.Job;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.AgentInfo;
@@ -10,8 +11,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
+import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -97,6 +101,13 @@ public class GoClientImplTest {
         assertTrue(firstPipeline.getDuration() > 0);
         assertNotNull(firstPipeline.getResult());
     }
+
+    @Test
+    public void should_get_pipeline_status(){
+        PipelineStatus pipelineStatus=goClient.fetchPipelineStatus("cd-metrics-ui");
+        assertNotNull(pipelineStatus);
+    }
+
 
     @Ignore
     @Test

@@ -5,10 +5,7 @@ import com.opencsv.CSVReader;
 import com.thoughtworks.lean.exception.ParseException;
 import com.thoughtworks.lean.gocd.GoClient;
 import com.thoughtworks.lean.gocd.JobParams;
-import com.thoughtworks.lean.gocd.dto.AgentInfo;
-import com.thoughtworks.lean.gocd.dto.AgentResourcesUpdateRequest;
-import com.thoughtworks.lean.gocd.dto.AgentStatusUpdateRequest;
-import com.thoughtworks.lean.gocd.dto.AgentsInfoResponse;
+import com.thoughtworks.lean.gocd.dto.*;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
 import com.thoughtworks.lean.util.NumberUtil;
@@ -124,7 +121,7 @@ public class GoClientImpl implements GoClient {
         return response.getBody();
     }
 
-    private void completePipelineHistory(PipelineHistory pipelineHistory) {
+    public void completePipelineHistory(PipelineHistory pipelineHistory) {
         this.updateJobProperties(pipelineHistory);
         pipelineHistory.caculateProps();
     }
@@ -281,6 +278,12 @@ public class GoClientImpl implements GoClient {
         LOG.debug(response.getBody());
     }
 
+    public PipelineStatus fetchPipelineStatus(String pipelineName) {
+        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
+        ResponseEntity<PipelineStatus> response = new RestTemplate().exchange(baseURI + "/api/pipelines/" + pipelineName + "/status", GET, request, PipelineStatus.class);
+        return response.getBody();
+    }
+
     private HttpHeaders buildHttpHeaders() {
         byte[] plainCredsBytes = (this.username + ":" + this.password).getBytes();
         byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
@@ -307,6 +310,5 @@ public class GoClientImpl implements GoClient {
 
         return headers;
     }
-
 
 }
