@@ -278,6 +278,7 @@ public class GoClientImpl implements GoClient {
         LOG.debug(response.getBody());
     }
 
+    @Override
     public PipelineStatus fetchPipelineStatus(String pipelineName) {
         HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
         ResponseEntity<PipelineStatus> response = new RestTemplate().exchange(baseURI + "/api/pipelines/" + pipelineName + "/status", GET, request, PipelineStatus.class);
