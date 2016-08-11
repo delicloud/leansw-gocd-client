@@ -147,6 +147,7 @@ public class GoClientImpl implements GoClient {
 
     @Override
     @Cacheable("gocd_pipelineInstance")
+    @Deprecated
     public Map getPipelineInstance(String pipelineName, String counter) {
         HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
         final String requestUrl = String.format("%s%s/%s/instance/%s", baseURI, PIPELINES, pipelineName, counter);
