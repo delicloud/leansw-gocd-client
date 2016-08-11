@@ -3,7 +3,7 @@
 
   <groupId>com.thoughtworks.lean</groupId>
   <artifactId>leansw-gocd-agent</artifactId>
-  <version>0.6</version>
+  <version>0.7-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <parent>
