@@ -203,7 +203,7 @@ public class GoClientImpl implements GoClient {
         try (CSVReader csvReader = new CSVReader(new StringReader(response.getBody()))) {
             final List<String[]> lines = csvReader.readAll();
             final String[] headers = lines.get(0);
-            final String[] datas = lines.get(1);
+            final String[] datas = lines.get(lines.size() - 1);
             final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
             NumberUtil.intRange(0, headers.length - 1).stream().forEach(
                     i -> builder.put(headers[i], datas[i])
