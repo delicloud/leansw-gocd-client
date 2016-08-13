@@ -3,7 +3,7 @@
 
   <groupId>com.thoughtworks.lean</groupId>
   <artifactId>leansw-gocd-agent</artifactId>
-  <version>0.7</version>
+  <version>0.8-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <parent>
@@ -23,7 +23,7 @@
     <url>https://github.com/tw-leansw/leansw-gocd-client</url>
     <connection>scm:git:git://github.com:tw-leansw/leansw-gocd-client.git</connection>
     <developerConnection>scm:git:git@github.com:tw-leansw/leansw-gocd-client.git</developerConnection>
-    <tag>v0.7</tag>
+    <tag>v0.6</tag>
   </scm>
 
   <dependencies>
