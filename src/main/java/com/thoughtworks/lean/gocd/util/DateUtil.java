@@ -1,4 +1,4 @@
-package com.thoughtworks.lean.util;
+package com.thoughtworks.lean.gocd.util;
 
 import com.google.common.collect.Lists;
 import org.joda.time.DateTime;

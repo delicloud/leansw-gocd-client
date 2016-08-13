@@ -1,14 +1,14 @@
 package com.thoughtworks.lean.gocd.dto.history;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.lean.util.DateUtil;
+import com.thoughtworks.lean.gocd.util.DateUtil;
 
 import java.util.*;
 
 import static com.thoughtworks.lean.gocd.dto.history.BuildStatus.Passed;
 import static com.thoughtworks.lean.gocd.dto.history.BuildStatus.Unknown;
-import static com.thoughtworks.lean.util.CollectionsUtil.sumInt;
-import static com.thoughtworks.lean.util.CollectionsUtil.sumLong;
+import static com.thoughtworks.lean.gocd.util.CollectionsUtil.sumInt;
+import static com.thoughtworks.lean.gocd.util.CollectionsUtil.sumLong;
 
 public class PipelineHistory {
     private int id;

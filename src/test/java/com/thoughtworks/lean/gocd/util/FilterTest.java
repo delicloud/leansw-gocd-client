@@ -1,4 +1,4 @@
-package com.thoughtworks.lean.util;
+package com.thoughtworks.lean.gocd.util;
 
 import org.junit.Test;
 

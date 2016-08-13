@@ -1,13 +1,13 @@
 package com.thoughtworks.lean.gocd.dto.history;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.thoughtworks.lean.util.DateUtil;
+import com.thoughtworks.lean.gocd.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.thoughtworks.lean.util.CollectionsUtil.sumLong;
+import static com.thoughtworks.lean.gocd.util.CollectionsUtil.sumLong;
 
 public class Stage {
 

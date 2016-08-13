@@ -1,4 +1,4 @@
-package com.thoughtworks.lean.util;
+package com.thoughtworks.lean.gocd.util;
 
 import com.google.common.primitives.Ints;
 import org.apache.commons.lang.math.IntRange;

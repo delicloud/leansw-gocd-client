@@ -8,7 +8,7 @@ import com.thoughtworks.lean.gocd.JobParams;
 import com.thoughtworks.lean.gocd.dto.*;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
-import com.thoughtworks.lean.util.NumberUtil;
+import com.thoughtworks.lean.gocd.util.NumberUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
