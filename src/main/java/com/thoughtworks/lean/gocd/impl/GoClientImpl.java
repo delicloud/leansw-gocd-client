@@ -167,7 +167,7 @@ public class GoClientImpl implements GoClient {
 
     @Override
     public Map<String, String> fetchJobProperties(JobParams jobParams) {
-        Optional<Map<String, String>> ret = getJobPropsUriComponents(jobParams, "/properties/search?pipelineName={pipelineName}&stageName={stageName}&jobName={jobName}&limitPipeline={pipelineCounter}");
+        Optional<Map<String, String>> ret = getJobPropsUriComponents(jobParams, "/properties/search?pipelineName={pipelineName}&stageName={stageName}&jobName={jobName}&limitPipeline={pipelineCounter}&limitCount=1");
         if (ret.isPresent()) {
             return ret.get();
         }
