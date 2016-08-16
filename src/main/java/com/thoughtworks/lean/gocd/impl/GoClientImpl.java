@@ -96,7 +96,7 @@ public class GoClientImpl implements GoClient {
 
     @Override
     public DashBoard getDashBoard() {
-        ResponseEntity<DashBoard> response = restTemplate.exchange(baseURI + "/api/dashboard", HttpMethod.GET, getStringRequest(), DashBoard.class);
+        ResponseEntity<DashBoard> response = restTemplate.exchange(baseURI + "/api/dashboard", HttpMethod.GET, new HttpEntity<>(buildHttpHeaders("v1")), DashBoard.class);
         return response.getBody();
     }
 

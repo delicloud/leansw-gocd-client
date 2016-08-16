@@ -42,7 +42,13 @@ public class GoClientImplTest {
     }
 
     @Test
-    public void should_return_dashboard() throws IOException {
+    public void should_return_dash_board(){
+        DashBoard dashBoard = goClient.getDashBoard();
+        assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
+    }
+
+    @Test
+    public void check_dashboard_domain() throws IOException {
         DashBoard dashBoard = JSONUtil.parseJSON(Resources.toString(this.getClass().getResource("/test_dashboard.json"), UTF_8), DashBoard.class);
         assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
 
