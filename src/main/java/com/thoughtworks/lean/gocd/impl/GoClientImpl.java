@@ -6,6 +6,7 @@ import com.thoughtworks.lean.exception.ParseException;
 import com.thoughtworks.lean.gocd.GoClient;
 import com.thoughtworks.lean.gocd.JobParams;
 import com.thoughtworks.lean.gocd.dto.*;
+import com.thoughtworks.lean.gocd.dto.dashboard.DashBoard;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
 import com.thoughtworks.lean.gocd.util.NumberUtil;
@@ -82,42 +83,43 @@ public class GoClientImpl implements GoClient {
 
     @Override
     public boolean manualRunPipelineStage(String pipeName, int counter, String stageName) {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
         String apiUrl = baseURI + "/run/" + pipeName + "/" + counter + "/" + stageName;
-        new RestTemplate().exchange(apiUrl, POST, request, String.class);
+        restTemplate.exchange(apiUrl, POST, getStringRequest(), String.class);
         return true;
     }
 
     private boolean pipelineAction(String pipeline, String action) {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
         String url = baseURI + PIPELINES + "/" + pipeline + "/" + action;
-        new RestTemplate().exchange(url, POST, request, String.class);
+        restTemplate.exchange(url, POST, getStringRequest(), String.class);
         return true;
     }
 
     @Override
+    public DashBoard getDashBoard() {
+        ResponseEntity<DashBoard> response = restTemplate.exchange(baseURI + "/api/dashboard", HttpMethod.GET, getStringRequest(), DashBoard.class);
+        return response.getBody();
+    }
+
+    @Override
     public String fetchCruiseConfiguration() {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
         String requestUrl = String.format("%s%s", baseURI, CONFIG_FILE);
-        ResponseEntity<String> response = new RestTemplate().exchange(requestUrl, HttpMethod.GET, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.GET, getStringRequest(), String.class);
         return response.getBody();
     }
 
     @Override
     public String fetchCruiseLog(String pipelineName, int pipelineCounter, String stageName, int stageCounter, String jobName) {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
         String requestUrl = String.format("%s%s/%s/%d/%s/%d/%s/cruise-output/console.log", baseURI, LOG_FILES, pipelineName, pipelineCounter, stageName, stageCounter, jobName);
-        ResponseEntity<String> response = new RestTemplate().exchange(requestUrl, HttpMethod.GET, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.GET, getStringRequest(), String.class);
         return response.getBody();
     }
 
     @Override
     @Cacheable("gocd_pipelineHistoryResult")
     public PipelineHistoryResult getPipelineHistory(String pipelineName, int offset) {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
         String requestUrl = String.format("%s%s/%s/history/%s", baseURI, PIPELINES, pipelineName, offset);
-        ResponseEntity<PipelineHistoryResult> response = new RestTemplate().exchange(requestUrl, HttpMethod.GET, request, PipelineHistoryResult.class);
-        response.getBody().getPipelines().stream().forEach(this::completePipelineHistory);
+        ResponseEntity<PipelineHistoryResult> response = restTemplate.exchange(requestUrl, HttpMethod.GET, getStringRequest(), PipelineHistoryResult.class);
+        response.getBody().getPipelines().forEach(this::completePipelineHistory);
         return response.getBody();
     }
 
@@ -127,7 +129,7 @@ public class GoClientImpl implements GoClient {
     }
 
     private void updateJobProperties(PipelineHistory pipelineHistory) {
-        pipelineHistory.getStages().stream().forEach(
+        pipelineHistory.getStages().forEach(
                 stage -> stage.getJobs().stream().filter(job -> job.getResult() != null)
                         .forEach(job -> job.setProperties(this.fetchJobProperties(
                                 pipelineHistory.getName(),
@@ -140,8 +142,7 @@ public class GoClientImpl implements GoClient {
     }
 
     public String getPipelineConfiguration(String pipelineName) {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders("v1"));
-        ResponseEntity<String> response = new RestTemplate().exchange(baseURI + ADMIN_PIPELINES + "/" + pipelineName, GET, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(baseURI + ADMIN_PIPELINES + "/" + pipelineName, GET, new HttpEntity<String>(buildHttpHeaders("v1")), String.class);
         return response.getBody();
     }
 
@@ -149,18 +150,17 @@ public class GoClientImpl implements GoClient {
     @Cacheable("gocd_pipelineInstance")
     @Deprecated
     public Map getPipelineInstance(String pipelineName, String counter) {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
+        HttpEntity<String> request = getStringRequest();
         final String requestUrl = String.format("%s%s/%s/instance/%s", baseURI, PIPELINES, pipelineName, counter);
-        ResponseEntity<HashMap> response = new RestTemplate().exchange(requestUrl, GET, request, HashMap.class);
+        ResponseEntity<HashMap> response = restTemplate.exchange(requestUrl, GET, request, HashMap.class);
         return response.getBody();
     }
 
     @Override
     @Cacheable("gocd_pipelineHistory")
     public PipelineHistory getPipelineInstance(String pipelineName, int counter) {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
         final String requestUrl = String.format("%s%s/%s/instance/%s", baseURI, PIPELINES, pipelineName, counter);
-        ResponseEntity<PipelineHistory> response = new RestTemplate().exchange(requestUrl, GET, request, PipelineHistory.class);
+        ResponseEntity<PipelineHistory> response = restTemplate.exchange(requestUrl, GET, getStringRequest(), PipelineHistory.class);
         this.completePipelineHistory(response.getBody());
         return response.getBody();
     }
@@ -171,7 +171,6 @@ public class GoClientImpl implements GoClient {
         if (ret.isPresent()) {
             return ret.get();
         }
-
         return getJobPropsUriComponents(jobParams, "/properties/{pipelineName}/{pipelineCounter}/{stageName}/{stageCounter}/{jobName}")
                 .orElse(new LinkedHashMap<>());
     }
@@ -183,7 +182,7 @@ public class GoClientImpl implements GoClient {
     }
 
     private Optional<Map<String, String>> getJobPropsUriComponents(JobParams jobParams, String template) {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
+        HttpEntity<String> request = getStringRequest();
         final UriComponents requestUri = UriComponentsBuilder.fromUriString(String.format("%s%s", baseURI, template)
                 .replace("{pipelineName}", jobParams.getPipeline())
                 .replace("{pipelineCounter}", Integer.toString(jobParams.getPipelineCounter()))
@@ -191,7 +190,7 @@ public class GoClientImpl implements GoClient {
                 .replace("{stageCounter}", Integer.toString(jobParams.getStageCounter()))
                 .replace("{jobName}", jobParams.getJob())).build();
         try {
-            ResponseEntity<String> response = new RestTemplate().exchange(requestUri.toUriString(), GET, request, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(requestUri.toUriString(), GET, request, String.class);
             LOG.info(String.format("Successfully fetched properties:%s", requestUri.toUriString()));
             return Optional.of(parseJobCsv(response));
         } catch (RestClientException e) {
@@ -206,7 +205,7 @@ public class GoClientImpl implements GoClient {
             final String[] headers = lines.get(0);
             final String[] datas = lines.get(lines.size() - 1);
             final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-            NumberUtil.intRange(0, headers.length - 1).stream().forEach(
+            NumberUtil.intRange(0, headers.length - 1).forEach(
                     i -> builder.put(headers[i], datas[i])
             );
             return builder.build();
@@ -218,15 +217,13 @@ public class GoClientImpl implements GoClient {
 
     @Override
     public AgentsInfoResponse fetchAllAgents() {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders("v2"));
-        ResponseEntity<AgentsInfoResponse> response = this.restTemplate.exchange(baseURI + "/api/agents", GET, request, AgentsInfoResponse.class);
+        ResponseEntity<AgentsInfoResponse> response = this.restTemplate.exchange(baseURI + "/api/agents", GET, getV2Request(), AgentsInfoResponse.class);
         return response.getBody();
     }
 
     @Override
     public AgentInfo getAgent(String uuid) {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders("v2"));
-        ResponseEntity<AgentInfo> response = this.restTemplate.exchange(baseURI + "/api/agents/" + uuid, GET, request, AgentInfo.class);
+        ResponseEntity<AgentInfo> response = this.restTemplate.exchange(baseURI + "/api/agents/" + uuid, GET, getV2Request(), AgentInfo.class);
         return response.getBody();
     }
 
@@ -235,14 +232,6 @@ public class GoClientImpl implements GoClient {
         AgentInfo agentInfo = getAgent(uuid);
         agentInfo.getResources().addAll(resources);
         return updateAgentResources(agentInfo);
-    }
-
-    private AgentInfo updateAgentResources(AgentInfo agentInfo) {
-        AgentResourcesUpdateRequest req = new AgentResourcesUpdateRequest()
-                .setResources(agentInfo.getResources());
-        HttpEntity<AgentResourcesUpdateRequest> request = new HttpEntity<>(req, buildHttpHeaders("v2"));
-        ResponseEntity<AgentInfo> response = this.restTemplate.exchange(baseURI + "/api/agents/" + agentInfo.getUuid(), PATCH, request, AgentInfo.class);
-        return response.getBody();
     }
 
 
@@ -257,10 +246,19 @@ public class GoClientImpl implements GoClient {
     private AgentInfo updateAgentStatus(String agentUUID, String status) {
         AgentStatusUpdateRequest req = new AgentStatusUpdateRequest()
                 .setAgentConfigState(status);
-        HttpEntity<AgentStatusUpdateRequest> request = new HttpEntity<>(req, buildHttpHeaders("v2"));
+        HttpEntity<AgentStatusUpdateRequest> request = getV2Request(req);
         ResponseEntity<AgentInfo> response = this.restTemplate.exchange(baseURI + "/api/agents/" + agentUUID, PATCH, request, AgentInfo.class);
         return response.getBody();
     }
+
+    private AgentInfo updateAgentResources(AgentInfo agentInfo) {
+        AgentResourcesUpdateRequest req = new AgentResourcesUpdateRequest()
+                .setResources(agentInfo.getResources());
+        HttpEntity<AgentResourcesUpdateRequest> request = getV2Request(req);
+        ResponseEntity<AgentInfo> response = this.restTemplate.exchange(baseURI + "/api/agents/" + agentInfo.getUuid(), PATCH, request, AgentInfo.class);
+        return response.getBody();
+    }
+
 
     @Override
     public AgentInfo disableAgent(String agentUUID) {
@@ -274,16 +272,28 @@ public class GoClientImpl implements GoClient {
 
     @Override
     public void deleteAgent(String agentNeedDelete) {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders("v2"));
+        HttpEntity<String> request = getV2Request();
         ResponseEntity<String> response = this.restTemplate.exchange(baseURI + "/api/agents/" + agentNeedDelete, DELETE, request, String.class);
         LOG.debug(response.getBody());
     }
 
+
     @Override
     public PipelineStatus fetchPipelineStatus(String pipelineName) {
-        HttpEntity<String> request = new HttpEntity<>(buildHttpHeaders());
-        ResponseEntity<PipelineStatus> response = new RestTemplate().exchange(baseURI + "/api/pipelines/" + pipelineName + "/status", GET, request, PipelineStatus.class);
+        ResponseEntity<PipelineStatus> response = this.restTemplate.exchange(baseURI + "/api/pipelines/" + pipelineName + "/status", GET, getStringRequest(), PipelineStatus.class);
         return response.getBody();
+    }
+
+    private HttpEntity<String> getStringRequest() {
+        return new HttpEntity<>(buildHttpHeaders());
+    }
+
+    private <T> HttpEntity<T> getV2Request(T req) {
+        return new HttpEntity<>(req, buildHttpHeaders("v2"));
+    }
+
+    private HttpEntity<String> getV2Request() {
+        return new HttpEntity<>(buildHttpHeaders("v2"));
     }
 
     private HttpHeaders buildHttpHeaders() {

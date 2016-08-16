@@ -3,6 +3,7 @@ package com.thoughtworks.lean.gocd;
 import com.thoughtworks.lean.gocd.dto.AgentInfo;
 import com.thoughtworks.lean.gocd.dto.AgentsInfoResponse;
 import com.thoughtworks.lean.gocd.dto.PipelineStatus;
+import com.thoughtworks.lean.gocd.dto.dashboard.DashBoard;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
 
@@ -49,6 +50,8 @@ public interface GoClient {
     AgentInfo enableAgent(String agentUUID);
 
     void deleteAgent(String agentNeedDelete);
+
+    DashBoard getDashBoard();
 
     PipelineStatus fetchPipelineStatus(String pipelineName);
 }

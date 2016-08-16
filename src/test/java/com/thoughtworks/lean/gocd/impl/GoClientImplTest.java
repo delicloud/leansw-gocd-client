@@ -1,22 +1,28 @@
 package com.thoughtworks.lean.gocd.impl;
 
-import com.thoughtworks.lean.gocd.dto.PipelineStatus;
-import com.thoughtworks.lean.gocd.dto.history.Job;
-import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
+import com.google.common.io.Resources;
 import com.thoughtworks.lean.gocd.dto.AgentInfo;
 import com.thoughtworks.lean.gocd.dto.AgentsInfoResponse;
+import com.thoughtworks.lean.gocd.dto.PipelineStatus;
+import com.thoughtworks.lean.gocd.dto.dashboard.DashBoard;
+import com.thoughtworks.lean.gocd.dto.history.Job;
+import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
+import com.thoughtworks.lean.gocd.util.JSONUtil;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Map;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GoClientImplTest {
 
@@ -36,6 +42,19 @@ public class GoClientImplTest {
     }
 
     @Test
+    public void should_return_dashboard() throws IOException {
+        DashBoard dashBoard = JSONUtil.parseJSON(Resources.toString(this.getClass().getResource("/test_dashboard.json"), UTF_8), DashBoard.class);
+        assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
+
+        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getEmbedded().getInstances().get(0).getEmbedded().getStages().get(0).getStatus(), notNullValue());
+        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getEmbedded().getInstances().get(0).getEmbedded().getStages().get(0).getName(), notNullValue());
+        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getPauseInfo(), notNullValue());
+        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getEmbedded().getInstances().get(0).getScheduleAt(), notNullValue());
+        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getEmbedded().getInstances().get(0).getTriggeredBy(), notNullValue());
+        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getEmbedded().getInstances().get(0).getLabel(), notNullValue());
+    }
+
+    @Test
     public void should_fetch_pipeline_instance() {
         PipelineHistory pipelineHistory = goClient.getPipelineInstance("cd-metrics-ui", 1);
         //System.out.println(configuration.toString());
@@ -43,6 +62,7 @@ public class GoClientImplTest {
         assertTrue(pipelineHistory.getDuration() > 0);
         assertNotNull(pipelineHistory.getResult());
     }
+
 
     @Ignore
     @Test
@@ -63,7 +83,7 @@ public class GoClientImplTest {
     @Test
     public void should_get_go_cd_agent_info() {
         AgentInfo agentInfo = goClient.getAgent("fcbd4ecc-9952-4e06-a9c4-ad2f1f97f618");
-        assertEquals("iZ28h2t7rzrZ",agentInfo.getHostname());
+        assertEquals("iZ28h2t7rzrZ", agentInfo.getHostname());
     }
 
     @Test
@@ -80,7 +100,7 @@ public class GoClientImplTest {
     }
 
     @Test
-    public void should_featch_all_agents(){
+    public void should_featch_all_agents() {
         AgentsInfoResponse agentsInfoResponse = goClient.fetchAllAgents();
         assertTrue(agentsInfoResponse.getEmbedded().getAgents().size() > 0);
     }
@@ -100,8 +120,8 @@ public class GoClientImplTest {
     }
 
     @Test
-    public void should_get_pipeline_status(){
-        PipelineStatus pipelineStatus=goClient.fetchPipelineStatus("cd-metrics-ui");
+    public void should_get_pipeline_status() {
+        PipelineStatus pipelineStatus = goClient.fetchPipelineStatus("cd-metrics-ui");
         assertNotNull(pipelineStatus);
     }
 
@@ -123,7 +143,6 @@ public class GoClientImplTest {
     public void should_unpause_pipeline_test_pipeline_1() {
         goClient.resume("test-pipeline-1");
     }
-
 
 
 }
