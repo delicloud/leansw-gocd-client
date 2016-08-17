@@ -90,7 +90,7 @@ public class GoClientImpl implements GoClient {
 
     private boolean pipelineAction(String pipeline, String action) {
         String url = baseURI + PIPELINES + "/" + pipeline + "/" + action;
-        restTemplate.exchange(url, POST, getStringRequest(), String.class);
+        restTemplate.exchange(url, POST, getStringRequestWithHeader("Confirm", "true"), String.class);
         return true;
     }
 
@@ -286,6 +286,12 @@ public class GoClientImpl implements GoClient {
 
     private HttpEntity<String> getStringRequest() {
         return new HttpEntity<>(buildHttpHeaders());
+    }
+
+    private HttpEntity<String> getStringRequestWithHeader(String header, String value) {
+        HttpHeaders headers = buildHttpHeaders();
+        headers.add(header, value);
+        return new HttpEntity<>(headers);
     }
 
     private <T> HttpEntity<T> getV2Request(T req) {
