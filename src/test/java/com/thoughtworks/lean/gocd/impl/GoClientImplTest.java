@@ -87,6 +87,7 @@ public class GoClientImplTest {
     }
 
     @Test
+    @Ignore
     public void should_get_go_cd_agent_info() {
         AgentInfo agentInfo = goClient.getAgent("fcbd4ecc-9952-4e06-a9c4-ad2f1f97f618");
         assertEquals("iZ28h2t7rzrZ", agentInfo.getHostname());
