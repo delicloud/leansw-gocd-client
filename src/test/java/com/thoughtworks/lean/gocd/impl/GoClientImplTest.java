@@ -24,14 +24,14 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class GoClientImplTest {
 
     private GoClientImpl goClient;
 
-
     @Before
     public void setup() {
-        String goHost = "http://gocd-server:8153/go/";
+        String goHost = "https://gocd.dev.twleansw.com/go/";
         goClient = new GoClientImpl(goHost, "admin", "badger");
     }
 
@@ -69,15 +69,12 @@ public class GoClientImplTest {
         assertNotNull(pipelineHistory.getResult());
     }
 
-
-    @Ignore
     @Test
     public void should_fetch_pipeline_job_log() {
         String log = goClient.fetchCruiseLog("cd-metrics-ui", 410, "check", 1, "eslint");
         //System.out.println(log);
     }
 
-    @Ignore
     @Test
     public void should_fetch_pipeline_job_properites() {
 
@@ -87,18 +84,15 @@ public class GoClientImplTest {
     }
 
     @Test
-    @Ignore
     public void should_get_go_cd_agent_info() {
         AgentInfo agentInfo = goClient.getAgent("fcbd4ecc-9952-4e06-a9c4-ad2f1f97f618");
         assertEquals("iZ28h2t7rzrZ", agentInfo.getHostname());
     }
 
     @Test
-    @Ignore
     public void should_start_manual_stage() {
         goClient.manualRunPipelineStage("test-pipeline-1", 99, "testManual");
     }
-
 
     @Test
     public void should_get_properties() {
@@ -133,19 +127,16 @@ public class GoClientImplTest {
     }
 
 
-    @Ignore
     @Test
     public void should_trigger_pipeline_test_pipeline_1() {
         goClient.schedule("test-pipeline-1");
     }
 
-    @Ignore
     @Test
     public void should_pause_pipeline_test_pipeline_1() {
         goClient.pause("test-pipeline-1");
     }
 
-    @Ignore
     @Test
     public void should_unpause_pipeline_test_pipeline_1() {
         goClient.resume("test-pipeline-1");

@@ -1928,7 +1928,7 @@
                 <variable name="DOCKER_IMAGE_NAME">
                     <value>deliflow-webapp</value>
                 </variable>
-                <variable name="http://gocd-server:8153/go/admin/pipelines/cd-metrics-ui/environment_variables" secure="true">
+                <variable name="https://gocd.dev.twleansw.com/go/admin/pipelines/cd-metrics-ui/environment_variables" secure="true">
                     <encryptedValue>tYxRqCIxJfg=</encryptedValue>
                 </variable>
             </environmentvariables>
@@ -2386,7 +2386,7 @@
                 <variable name="SONAR_MYSQL">
                     <value>182.92.6.60</value>
                 </variable>
-                <variable name="http://gocd-server:8153/go/admin/pipelines/cd-metrics-ui/environment_variables" secure="true">
+                <variable name="https://gocd.dev.twleansw.com/go/admin/pipelines/cd-metrics-ui/environment_variables" secure="true">
                     <encryptedValue>tYxRqCIxJfg=</encryptedValue>
                 </variable>
             </environmentvariables>
@@ -4880,7 +4880,7 @@
                 <variable name="SONAR_MYSQL">
                     <value>182.92.6.60</value>
                 </variable>
-                <variable name="http://gocd-server:8153/go/admin/pipelines/cd-metrics-ui/environment_variables" secure="true">
+                <variable name="https://gocd.dev.twleansw.com/go/admin/pipelines/cd-metrics-ui/environment_variables" secure="true">
                     <encryptedValue>tYxRqCIxJfg=</encryptedValue>
                 </variable>
             </environmentvariables>
