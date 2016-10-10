@@ -90,6 +90,14 @@ public class GoClientImplTest {
     }
 
     @Test
+    @Ignore
+    public void should_get_go_cd_agent_info2() {
+        AgentInfo agentInfo = goClient.getAgent("d75d4892-4af1-4bcb-9cf8-256b24cce6bf");
+        assertEquals("iZ28h2t7rzrZ", agentInfo.getHostname());
+    }
+
+    @Test
+    @Ignore
     public void should_start_manual_stage() {
         goClient.manualRunPipelineStage("test-pipeline-1", 99, "testManual");
     }
