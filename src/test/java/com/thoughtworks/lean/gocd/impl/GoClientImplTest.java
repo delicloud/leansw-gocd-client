@@ -1,6 +1,5 @@
 package com.thoughtworks.lean.gocd.impl;
 
-import com.google.common.io.Resources;
 import com.thoughtworks.lean.gocd.dto.AgentInfo;
 import com.thoughtworks.lean.gocd.dto.AgentsInfoResponse;
 import com.thoughtworks.lean.gocd.dto.PipelineStatus;
@@ -8,21 +7,17 @@ import com.thoughtworks.lean.gocd.dto.dashboard.DashBoard;
 import com.thoughtworks.lean.gocd.dto.history.Job;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
-import com.thoughtworks.lean.gocd.util.JSONUtil;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Map;
 
-import static com.google.common.base.Charsets.UTF_8;
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 @Ignore
@@ -43,12 +38,10 @@ public class GoClientImplTest {
     }
 
     @Test
-    public void should_return_dash_board(){
+    public void should_return_dash_board() {
         DashBoard dashBoard = goClient.getDashBoard();
         assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
     }
-
-
 
 
     @Test
@@ -117,6 +110,15 @@ public class GoClientImplTest {
         assertNotNull(firstPipeline);
         assertTrue(firstPipeline.getDuration() > 0);
         assertNotNull(firstPipeline.getResult());
+    }
+
+
+    @Test
+    public void should_get_correct_pipeline_history_result_incomplete() {
+
+        PipelineHistoryResult result = goClient.getPipelineHistory("cd-metrics-ui", 0, false);
+        PipelineHistory firstPipeline = result.getPipelines().get(0);
+        assertNotNull(firstPipeline);
     }
 
     @Test
