@@ -15,6 +15,7 @@ public class Job {
     private String name;
     private String result;
     private String state;
+    @JsonProperty("_id")
     private int id;
     @JsonProperty("scheduled_date")
     private Date scheduledDate;

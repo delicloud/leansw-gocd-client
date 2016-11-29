@@ -1,4 +1,4 @@
-package com.thoughtworks.lean.gocd.dto.origin;
+package com.thoughtworks.lean.gocd.dto.origin.stage;
 
 /**
  * Created by yongliuli on 11/29/16.
