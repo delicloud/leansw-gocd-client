@@ -17,7 +17,6 @@ public class Stage {
     private List<Job> jobs = new ArrayList<>();
     @JsonProperty("can_run")
     private boolean canRun;
-    private String state;
     private String result;
     @JsonProperty("approval_type")
     private String approvalType;
@@ -150,15 +149,6 @@ public class Stage {
 
     public boolean isCanRun() {
         return canRun;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public Stage setState(String state) {
-        this.state = state;
-        return this;
     }
 
     public boolean isOperatePermission() {
