@@ -1,0 +1,272 @@
+{
+  "_links": {
+  "self": {
+    "href": "https://gocd.dev.twleansw.com/go/api/dashboard"
+  },
+  "doc": {
+    "href": "http://api.go.cd/current/#dashboard"
+  }
+},
+  "_embedded": {
+    "pipeline_groups": [
+      {
+        "_links": {
+          "self": {
+            "href": "https://gocd.dev.twleansw.com/go/api/config/pipeline_groups"
+          },
+          "doc": {
+            "href": "http://api.go.cd/current/#pipeline-groups"
+          }
+        },
+        "name": "test",
+        "_embedded": {
+          "pipelines": [
+            {
+              "_links": {
+                "self": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-3/history"
+                },
+                "doc": {
+                  "href": "http://api.go.cd/current/#pipelines"
+                },
+                "settings_path": {
+                  "href": "https://gocd.dev.twleansw.com/go/admin/pipelines/test-pipeline-3/general"
+                },
+                "trigger": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-3/schedule"
+                },
+                "trigger_with_options": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-3/schedule"
+                },
+                "pause": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-3/pause"
+                },
+                "unpause": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-3/unpause"
+                }
+              },
+              "name": "test-pipeline-3",
+              "locked": false,
+              "pause_info": {
+                "paused": false,
+                "paused_by": null,
+                "pause_reason": null
+              },
+              "_embedded": {
+                "instances": [
+                  {
+                    "_links": {
+                      "self": {
+                        "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-3/instance/46"
+                      },
+                      "doc": {
+                        "href": "http://api.go.cd/current/#get-pipeline-instance"
+                      },
+                      "history_url": {
+                        "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-3/history"
+                      },
+                      "vsm_url": {
+                        "href": "mock_data"
+                      },
+                      "compare_url": {
+                        "href": "https://gocd.dev.twleansw.com/go/compare/test-pipeline-3/45/with/46"
+                      },
+                      "build_cause_url": {
+                        "href": "https://gocd.dev.twleansw.com/go/pipelines/test-pipeline-3/46/build_cause"
+                      }
+                    },
+                    "label": "46",
+                    "schedule_at": "2016-08-02T07:29:05.154Z",
+                    "triggered_by": "admin",
+                    "_embedded": {
+                      "stages": [
+                        {
+                          "_links": {
+                            "self": {
+                              "href": "https://gocd.dev.twleansw.com/go/api/stages/test-pipeline-3/46/defaultStage/1"
+                            },
+                            "doc": {
+                              "href": "http://api.go.cd/current/#get-stage-instance"
+                            }
+                          },
+                          "name": "defaultStage",
+                          "status": "Passed"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "_links": {
+                "self": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-1/history"
+                },
+                "doc": {
+                  "href": "http://api.go.cd/current/#pipelines"
+                },
+                "settings_path": {
+                  "href": "https://gocd.dev.twleansw.com/go/admin/pipelines/test-pipeline-1/general"
+                },
+                "trigger": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-1/schedule"
+                },
+                "trigger_with_options": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-1/schedule"
+                },
+                "pause": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-1/pause"
+                },
+                "unpause": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-1/unpause"
+                }
+              },
+              "name": "test-pipeline-1",
+              "locked": false,
+              "pause_info": {
+                "paused": false,
+                "paused_by": null,
+                "pause_reason": null
+              },
+              "_embedded": {
+                "instances": [
+                  {
+                    "_links": {
+                      "self": {
+                        "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-1/instance/139"
+                      },
+                      "doc": {
+                        "href": "http://api.go.cd/current/#get-pipeline-instance"
+                      },
+                      "history_url": {
+                        "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-1/history"
+                      },
+                      "vsm_url": {
+                        "href": "https://gocd.dev.twleansw.com/go/pipelines/value_stream_map/test-pipeline-1/139"
+                      },
+                      "compare_url": {
+                        "href": "https://gocd.dev.twleansw.com/go/compare/test-pipeline-1/138/with/139"
+                      },
+                      "build_cause_url": {
+                        "href": "https://gocd.dev.twleansw.com/go/pipelines/test-pipeline-1/139/build_cause"
+                      }
+                    },
+                    "label": "139",
+                    "schedule_at": "2016-08-16T01:20:51.076Z",
+                    "triggered_by": "admin",
+                    "_embedded": {
+                      "stages": [
+                        {
+                          "_links": {
+                            "self": {
+                              "href": "https://gocd.dev.twleansw.com/go/api/stages/test-pipeline-1/139/defaultStage/1"
+                            },
+                            "doc": {
+                              "href": "http://api.go.cd/current/#get-stage-instance"
+                            }
+                          },
+                          "name": "defaultStage",
+                          "status": "Failed"
+                        },
+                        {
+                          "_links": {
+                            "self": {
+                              "href": "https://gocd.dev.twleansw.com/go/api/stages/test-pipeline-1/139/testManual/1"
+                            },
+                            "doc": {
+                              "href": "http://api.go.cd/current/#get-stage-instance"
+                            }
+                          },
+                          "name": "testManual",
+                          "status": "Unknown"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "_links": {
+                "self": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-2/history"
+                },
+                "doc": {
+                  "href": "http://api.go.cd/current/#pipelines"
+                },
+                "settings_path": {
+                  "href": "https://gocd.dev.twleansw.com/go/admin/pipelines/test-pipeline-2/general"
+                },
+                "trigger": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-2/schedule"
+                },
+                "trigger_with_options": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-2/schedule"
+                },
+                "pause": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-2/pause"
+                },
+                "unpause": {
+                  "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-2/unpause"
+                }
+              },
+              "name": "test-pipeline-2",
+              "locked": false,
+              "pause_info": {
+                "paused": false,
+                "paused_by": null,
+                "pause_reason": null
+              },
+              "_embedded": {
+                "instances": [
+                  {
+                    "_links": {
+                      "self": {
+                        "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-2/instance/29"
+                      },
+                      "doc": {
+                        "href": "http://api.go.cd/current/#get-pipeline-instance"
+                      },
+                      "history_url": {
+                        "href": "https://gocd.dev.twleansw.com/go/api/pipelines/test-pipeline-2/history"
+                      },
+                      "vsm_url": {
+                        "href": "https://gocd.dev.twleansw.com/go/pipelines/value_stream_map/test-pipeline-2/29"
+                      },
+                      "compare_url": {
+                        "href": "https://gocd.dev.twleansw.com/go/compare/test-pipeline-2/28/with/29"
+                      },
+                      "build_cause_url": {
+                        "href": "https://gocd.dev.twleansw.com/go/pipelines/test-pipeline-2/29/build_cause"
+                      }
+                    },
+                    "label": "29",
+                    "schedule_at": "2016-05-11T12:51:32.825Z",
+                    "triggered_by": "admin",
+                    "_embedded": {
+                      "stages": [
+                        {
+                          "_links": {
+                            "self": {
+                              "href": "https://gocd.dev.twleansw.com/go/api/stages/test-pipeline-2/29/defaultStage/1"
+                            },
+                            "doc": {
+                              "href": "http://api.go.cd/current/#get-stage-instance"
+                            }
+                          },
+                          "name": "defaultStage",
+                          "status": "Passed"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

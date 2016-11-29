@@ -1,8 +1,11 @@
 package com.thoughtworks.lean.gocd.dto.dashboard;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by yongliuli on 8/16/16.
@@ -17,6 +20,10 @@ public class PipelineInstance {
     private String triggeredBy;
     @JsonProperty("_embedded")
     private EmbeddedStages embedded;
+
+    @JsonProperty("_links")
+    Map<String,Link> links;
+
 
     public String getLabel() {
         return label;
@@ -54,26 +61,40 @@ public class PipelineInstance {
         return this;
     }
 
+    public Map<String, Link> getLinks() {
+        return links;
+    }
+
+    public PipelineInstance setLinks(Map<String, Link> links) {
+        this.links = links;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (o == null || getClass() != o.getClass()) return false;
 
         PipelineInstance that = (PipelineInstance) o;
 
-        if (label != null ? !label.equals(that.label) : that.label != null) return false;
-        if (scheduleAt != null ? !scheduleAt.equals(that.scheduleAt) : that.scheduleAt != null) return false;
-        if (triggeredBy != null ? !triggeredBy.equals(that.triggeredBy) : that.triggeredBy != null) return false;
-        return embedded != null ? embedded.equals(that.embedded) : that.embedded == null;
-
+        return new EqualsBuilder()
+                .append(label, that.label)
+                .append(scheduleAt, that.scheduleAt)
+                .append(triggeredBy, that.triggeredBy)
+                .append(embedded, that.embedded)
+                .append(links, that.links)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = label != null ? label.hashCode() : 0;
-        result = 31 * result + (scheduleAt != null ? scheduleAt.hashCode() : 0);
-        result = 31 * result + (triggeredBy != null ? triggeredBy.hashCode() : 0);
-        result = 31 * result + (embedded != null ? embedded.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(label)
+                .append(scheduleAt)
+                .append(triggeredBy)
+                .append(embedded)
+                .append(links)
+                .toHashCode();
     }
 }

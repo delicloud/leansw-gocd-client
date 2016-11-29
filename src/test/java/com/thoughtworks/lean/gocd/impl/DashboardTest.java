@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNotEquals;
 public class DashboardTest {
 
     @Test
-    public void check_dashboard_domain() throws IOException {
+    public void check_dashboard_domain_value_exist() throws IOException {
         DashBoard dashBoard = JSONUtil.parseJSON(Resources.toString(this.getClass().getResource("/test_dashboard.json"), UTF_8), DashBoard.class);
         assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
         assertThat(getDashboardFirstPipelineInstance(dashBoard).getEmbedded().getStages().get(0).getStatus(), notNullValue());
@@ -31,14 +31,24 @@ public class DashboardTest {
         assertThat(getDashboardFirstPipelineInstance(dashBoard).getTriggeredBy(), notNullValue());
         assertThat(getDashboardFirstPipelineInstance(dashBoard).getLabel(), notNullValue());
 
+
+    }
+
+    @Test
+    public void should_pipeline_changed_be_checked() throws IOException {
+
+        DashBoard dashBoard = JSONUtil.parseJSON(Resources.toString(this.getClass().getResource("/test_dashboard.json"), UTF_8), DashBoard.class);
         DashBoard dashBoard1 = JSONUtil.parseJSON(Resources.toString(this.getClass().getResource("/test_dashboard.json"), UTF_8), DashBoard.class);
 
-        //
         assertEquals(dashBoard, dashBoard1);
         getDashboardFirstPipelineInstance(dashBoard1).getEmbedded().getStages().get(0).getLinks().get("self").setHref("1");
         assertNotEquals(dashBoard, dashBoard1);
         assertNotEquals(getDashboardFirstPipeline(dashBoard), getDashboardFirstPipeline(dashBoard1));
+
     }
+
+
+
 
     private PipelineInstance getDashboardFirstPipelineInstance(DashBoard dashBoard) {
         return getDashboardFirstPipeline(dashBoard).getEmbedded().getInstances().get(0);
