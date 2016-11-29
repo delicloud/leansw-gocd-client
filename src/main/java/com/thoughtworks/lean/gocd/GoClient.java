@@ -23,6 +23,10 @@ public interface GoClient {
 
     PipelineHistory getPipelineInstance(String pipelineName, int counter);
 
+    PipelineHistory getPipelineInstance(String pipelineName, int counter, boolean complete);
+
+
+
     boolean schedule(String pipeline);
 
     String fetchCruiseConfiguration();

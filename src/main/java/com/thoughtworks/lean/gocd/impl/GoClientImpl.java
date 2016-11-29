@@ -169,9 +169,16 @@ public class GoClientImpl implements GoClient {
     @Override
     @Cacheable("gocd_pipelineHistory")
     public PipelineHistory getPipelineInstance(String pipelineName, int counter) {
+        return getPipelineInstance(pipelineName, counter, true);
+    }
+
+    @Override
+    public PipelineHistory getPipelineInstance(String pipelineName, int counter, boolean complete) {
         final String requestUrl = String.format("%s%s/%s/instance/%s", baseURI, PIPELINES, pipelineName, counter);
         ResponseEntity<PipelineHistory> response = restTemplate.exchange(requestUrl, GET, getStringRequest(), PipelineHistory.class);
-        this.completePipelineHistory(response.getBody());
+        if (complete) {
+            this.completePipelineHistory(response.getBody());
+        }
         return response.getBody();
     }
 
