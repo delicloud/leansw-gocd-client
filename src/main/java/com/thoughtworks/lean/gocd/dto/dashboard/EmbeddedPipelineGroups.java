@@ -19,5 +19,21 @@ public class EmbeddedPipelineGroups {
         this.pipelineGroups = pipelineGroups;
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EmbeddedPipelineGroups that = (EmbeddedPipelineGroups) o;
+
+        return pipelineGroups != null ? pipelineGroups.equals(that.pipelineGroups) : that.pipelineGroups == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return pipelineGroups != null ? pipelineGroups.hashCode() : 0;
+    }
 }
 

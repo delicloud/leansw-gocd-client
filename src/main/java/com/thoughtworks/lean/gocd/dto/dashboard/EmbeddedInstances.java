@@ -16,4 +16,20 @@ public class EmbeddedInstances {
         this.instances = instances;
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EmbeddedInstances that = (EmbeddedInstances) o;
+
+        return instances != null ? instances.equals(that.instances) : that.instances == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return instances != null ? instances.hashCode() : 0;
+    }
 }

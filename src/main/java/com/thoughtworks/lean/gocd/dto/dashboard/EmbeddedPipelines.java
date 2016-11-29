@@ -16,4 +16,20 @@ public class EmbeddedPipelines {
         this.pipelines = pipelines;
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EmbeddedPipelines that = (EmbeddedPipelines) o;
+
+        return pipelines != null ? pipelines.equals(that.pipelines) : that.pipelines == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return pipelines != null ? pipelines.hashCode() : 0;
+    }
 }

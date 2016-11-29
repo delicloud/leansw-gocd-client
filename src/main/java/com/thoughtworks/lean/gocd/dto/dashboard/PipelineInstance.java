@@ -53,4 +53,27 @@ public class PipelineInstance {
         this.embedded = embedded;
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PipelineInstance that = (PipelineInstance) o;
+
+        if (label != null ? !label.equals(that.label) : that.label != null) return false;
+        if (scheduleAt != null ? !scheduleAt.equals(that.scheduleAt) : that.scheduleAt != null) return false;
+        if (triggeredBy != null ? !triggeredBy.equals(that.triggeredBy) : that.triggeredBy != null) return false;
+        return embedded != null ? embedded.equals(that.embedded) : that.embedded == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = label != null ? label.hashCode() : 0;
+        result = 31 * result + (scheduleAt != null ? scheduleAt.hashCode() : 0);
+        result = 31 * result + (triggeredBy != null ? triggeredBy.hashCode() : 0);
+        result = 31 * result + (embedded != null ? embedded.hashCode() : 0);
+        return result;
+    }
 }

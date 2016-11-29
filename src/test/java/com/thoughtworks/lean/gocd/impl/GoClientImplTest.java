@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 @Ignore
@@ -31,7 +32,7 @@ public class GoClientImplTest {
 
     @Before
     public void setup() {
-        String goHost = "https://gocd.dev.twleansw.com/go/";
+        String goHost = "http://gocd-server:8153/go/";
         goClient = new GoClientImpl(goHost, "admin", "badger");
     }
 
@@ -47,18 +48,8 @@ public class GoClientImplTest {
         assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
     }
 
-    @Test
-    public void check_dashboard_domain() throws IOException {
-        DashBoard dashBoard = JSONUtil.parseJSON(Resources.toString(this.getClass().getResource("/test_dashboard.json"), UTF_8), DashBoard.class);
-        assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
 
-        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getEmbedded().getInstances().get(0).getEmbedded().getStages().get(0).getStatus(), notNullValue());
-        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getEmbedded().getInstances().get(0).getEmbedded().getStages().get(0).getName(), notNullValue());
-        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getPauseInfo(), notNullValue());
-        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getEmbedded().getInstances().get(0).getScheduleAt(), notNullValue());
-        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getEmbedded().getInstances().get(0).getTriggeredBy(), notNullValue());
-        assertThat(dashBoard.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0).getEmbedded().getInstances().get(0).getLabel(), notNullValue());
-    }
+
 
     @Test
     public void should_fetch_pipeline_instance() {
