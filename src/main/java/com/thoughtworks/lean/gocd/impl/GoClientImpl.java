@@ -115,13 +115,23 @@ public class GoClientImpl implements GoClient {
     }
 
     @Override
-    @Cacheable("gocd_pipelineHistoryResult")
     public PipelineHistoryResult getPipelineHistory(String pipelineName, int offset) {
         String requestUrl = String.format("%s%s/%s/history/%s", baseURI, PIPELINES, pipelineName, offset);
         ResponseEntity<PipelineHistoryResult> response = restTemplate.exchange(requestUrl, HttpMethod.GET, getStringRequest(), PipelineHistoryResult.class);
         response.getBody().getPipelines().forEach(this::completePipelineHistory);
         return response.getBody();
     }
+
+    @Override
+    public PipelineHistoryResult getPipelineHistory(String pipelineName, int offset, boolean complete) {
+        String requestUrl = String.format("%s%s/%s/history/%s", baseURI, PIPELINES, pipelineName, offset);
+        ResponseEntity<PipelineHistoryResult> response = restTemplate.exchange(requestUrl, HttpMethod.GET, getStringRequest(), PipelineHistoryResult.class);
+        if (complete) {
+            response.getBody().getPipelines().forEach(this::completePipelineHistory);
+        }
+        return response.getBody();
+    }
+
 
     public void completePipelineHistory(PipelineHistory pipelineHistory) {
         this.updateJobProperties(pipelineHistory);
