@@ -18,6 +18,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @Ignore
@@ -51,6 +52,16 @@ public class GoClientImplTest {
         assertNotNull(pipelineHistory);
         assertTrue(pipelineHistory.getDuration() > 0);
         assertNotNull(pipelineHistory.getResult());
+    }
+
+
+    @Test
+    public void should_fetch_pipeline_instance_incomplete() {
+        PipelineHistory pipelineHistory = goClient.getPipelineInstance("cd-metrics-ui", 1, false);
+        //System.out.println(configuration.toString());
+        assertNotNull(pipelineHistory);
+        assertTrue(pipelineHistory.getDuration() == 0);
+        assertNull(pipelineHistory.getResult());
     }
 
     @Test
@@ -119,6 +130,8 @@ public class GoClientImplTest {
         PipelineHistoryResult result = goClient.getPipelineHistory("cd-metrics-ui", 0, false);
         PipelineHistory firstPipeline = result.getPipelines().get(0);
         assertNotNull(firstPipeline);
+        assertNull(firstPipeline.getResult());
+        assertTrue(firstPipeline.getDuration() == 0);
     }
 
     @Test
