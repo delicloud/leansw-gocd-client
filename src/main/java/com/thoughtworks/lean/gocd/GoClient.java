@@ -6,7 +6,9 @@ import com.thoughtworks.lean.gocd.dto.PipelineStatus;
 import com.thoughtworks.lean.gocd.dto.dashboard.DashBoard;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
+import com.thoughtworks.lean.gocd.dto.pipeline.Template;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,8 +26,6 @@ public interface GoClient {
     PipelineHistory getPipelineInstance(String pipelineName, int counter);
 
     PipelineHistory getPipelineInstance(String pipelineName, int counter, boolean complete);
-
-
 
     boolean schedule(String pipeline);
 
@@ -60,4 +60,8 @@ public interface GoClient {
     DashBoard getDashBoard();
 
     PipelineStatus fetchPipelineStatus(String pipelineName);
+
+    Collection<Template> getAllTemplates();
+
+    Template getTemplate(String name);
 }

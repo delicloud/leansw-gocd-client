@@ -7,10 +7,13 @@ import com.thoughtworks.lean.gocd.dto.dashboard.DashBoard;
 import com.thoughtworks.lean.gocd.dto.history.Job;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
+import com.thoughtworks.lean.gocd.dto.pipeline.Template;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Collection;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertNotNull;
@@ -29,7 +32,7 @@ public class GoClientImplTest {
     @Before
     public void setup() {
         String goHost = "http://gocd-server:8153/go/";
-        goClient = new GoClientImpl(goHost, "admin", "badger");
+        goClient = new GoClientImpl(new RestTemplate(), goHost, "admin", "badger");
     }
 
     @Test
@@ -66,7 +69,7 @@ public class GoClientImplTest {
 
     @Test
     public void should_fetch_pipeline_job_log() {
-        String log = goClient.fetchCruiseLog("cd-metrics-ui", 410, "check", 1, "eslint");
+        String log = goClient.fetchCruiseLog("cd-metrics-ui", 628, "check", 1, "eslint_kamar_test");
         //System.out.println(log);
     }
 
@@ -80,8 +83,8 @@ public class GoClientImplTest {
 
     @Test
     public void should_get_go_cd_agent_info() {
-        AgentInfo agentInfo = goClient.getAgent("fcbd4ecc-9952-4e06-a9c4-ad2f1f97f618");
-        assertEquals("iZ28h2t7rzrZ", agentInfo.getHostname());
+        AgentInfo agentInfo = goClient.getAgent("5362b3ab-1a25-4c55-af36-8db31cbaffab");
+        assertEquals("4cb11329123d", agentInfo.getHostname());
     }
 
     @Test
@@ -142,6 +145,7 @@ public class GoClientImplTest {
 
 
     @Test
+    @Ignore
     public void should_trigger_pipeline_test_pipeline_1() {
         goClient.schedule("test-pipeline-1");
     }
@@ -156,5 +160,16 @@ public class GoClientImplTest {
         goClient.resume("test-pipeline-1");
     }
 
+    @Test
+    public void should_get_all_templates() throws Exception {
+        Collection<Template> templateLsit = goClient.getAllTemplates();
+        templateLsit.stream().map(Template::getName).forEach(System.out::println);
+    }
+
+    @Test
+    public void should_get_template() throws Exception {
+        Template template = goClient.getTemplate("test-template1");
+        assertEquals(2,template.getStages().size());
+    }
 
 }

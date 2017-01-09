@@ -9,15 +9,20 @@ import com.thoughtworks.lean.gocd.dto.*;
 import com.thoughtworks.lean.gocd.dto.dashboard.DashBoard;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
+import com.thoughtworks.lean.gocd.dto.pipeline.Template;
 import com.thoughtworks.lean.gocd.util.NumberUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -30,6 +35,7 @@ import java.util.*;
 import static org.springframework.http.HttpMethod.*;
 
 @Component
+@RestController
 public class GoClientImpl implements GoClient {
 
     private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(GoClient.class);
@@ -48,22 +54,27 @@ public class GoClientImpl implements GoClient {
 
     private String password;
 
-    private RestTemplate restTemplate;
-
     private int TIMEOUT = 5000;
 
+    private RestTemplate restTemplate;
+
     @Autowired
-    public GoClientImpl(
+    public GoClientImpl( RestTemplate restTemplate,
             @Value("${gocd.uri}") String baseURL, @Value("${gocd.username}") String username,
             @Value("${gocd.password}") String password) {
         this.baseURI = baseURL;
         this.username = username;
         this.password = password;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = restTemplate;
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setConnectTimeout(TIMEOUT);
         requestFactory.setReadTimeout(TIMEOUT);
         restTemplate.setRequestFactory(requestFactory);
+
+//        restTemplate.getMessageConverters()
+//                .stream()
+//                .filter(converter -> converter instanceof TypeConstrainedMappingJackson2HttpMessageConverter)
+//                .forEach( httpMessageConverter -> ((TypeConstrainedMappingJackson2HttpMessageConverter) httpMessageConverter).setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON, new MediaType("application", "vnd.go.cd.v2+json"))));
     }
 
     @Override
@@ -299,6 +310,27 @@ public class GoClientImpl implements GoClient {
     public PipelineStatus fetchPipelineStatus(String pipelineName) {
         ResponseEntity<PipelineStatus> response = this.restTemplate.exchange(baseURI + "/api/pipelines/" + pipelineName + "/status", GET, getStringRequest(), PipelineStatus.class);
         return response.getBody();
+    }
+
+    @Override
+    public Collection<Template> getAllTemplates() {
+
+        ParameterizedTypeReference<Resources<Template>> ptr = new ParameterizedTypeReference<Resources<Template>>() {
+        };
+
+        ResponseEntity<Resources<Template>> entity =
+                this.restTemplate.exchange(baseURI + "/api/admin/templates", GET, getV2Request(), ptr);
+
+        return entity.getBody().getContent();
+    }
+
+    @Override
+    public Template getTemplate(String name) {
+        ParameterizedTypeReference<Resource<Template>> ptr = new ParameterizedTypeReference<Resource<Template>>() {
+        };
+        ResponseEntity<Resource<Template>> entity = this.restTemplate
+                .exchange(baseURI + "/api/admin/templates/" + name, GET, getV2Request(), ptr);
+        return entity.getBody().getContent();
     }
 
     private HttpEntity<String> getStringRequest() {
