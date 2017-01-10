@@ -7,7 +7,7 @@ public class Job {
 
     private String name = "defaultJob";
     private String run_instance_count;
-    private long timeout;
+    private Number timeout;
     private List<EnvironmentVariables> environment_variables = new ArrayList<>();
     private List<String> resources = new ArrayList<>();
     private List<Task> tasks = new ArrayList<>();
@@ -28,11 +28,11 @@ public class Job {
         this.run_instance_count = run_instance_count;
     }
 
-    public long getTimeout() {
+    public Number getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(long timeout) {
+    public void setTimeout(Number timeout) {
         this.timeout = timeout;
     }
 

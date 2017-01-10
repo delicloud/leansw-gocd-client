@@ -7,6 +7,7 @@ import com.thoughtworks.lean.gocd.dto.dashboard.DashBoard;
 import com.thoughtworks.lean.gocd.dto.history.Job;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
+import com.thoughtworks.lean.gocd.dto.pipeline.PipelineGroup;
 import com.thoughtworks.lean.gocd.dto.pipeline.Template;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -172,4 +173,17 @@ public class GoClientImplTest {
         assertEquals(2,template.getStages().size());
     }
 
+    @Test
+    @Ignore
+    public void should_create_new_pipeline_using_template() throws Exception {
+        Template template = goClient.getTemplate("test-template1");
+        goClient.createPipelineFromTemplate("new-test-template1","test" , "test-template1");
+    }
+
+    @Test
+    public void should_get_all_pipeline_groups() throws Exception {
+        Collection<PipelineGroup> groups = goClient.getPipelineGroups();
+        assertTrue(groups.size() > 0);
+
+    }
 }

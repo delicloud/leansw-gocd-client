@@ -1,7 +1,10 @@
 package com.thoughtworks.lean.gocd.dto.pipeline;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.util.List;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
 public class ExecTaskAttributes implements TaskAttributes{
 
     List<String> run_if;

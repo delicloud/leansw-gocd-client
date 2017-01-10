@@ -9,7 +9,7 @@ import com.thoughtworks.lean.gocd.dto.*;
 import com.thoughtworks.lean.gocd.dto.dashboard.DashBoard;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
-import com.thoughtworks.lean.gocd.dto.pipeline.Template;
+import com.thoughtworks.lean.gocd.dto.pipeline.*;
 import com.thoughtworks.lean.gocd.util.NumberUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -69,12 +69,7 @@ public class GoClientImpl implements GoClient {
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setConnectTimeout(TIMEOUT);
         requestFactory.setReadTimeout(TIMEOUT);
-        restTemplate.setRequestFactory(requestFactory);
-
-//        restTemplate.getMessageConverters()
-//                .stream()
-//                .filter(converter -> converter instanceof TypeConstrainedMappingJackson2HttpMessageConverter)
-//                .forEach( httpMessageConverter -> ((TypeConstrainedMappingJackson2HttpMessageConverter) httpMessageConverter).setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON, new MediaType("application", "vnd.go.cd.v2+json"))));
+        this.restTemplate.setRequestFactory(requestFactory);
     }
 
     @Override
@@ -333,6 +328,32 @@ public class GoClientImpl implements GoClient {
         return entity.getBody().getContent();
     }
 
+    @Override
+    public PipelineConfig createPipelineFromTemplate(String pipelineName, String groupName, String templateName) {
+        ParameterizedTypeReference<Resource<PipelineConfig>> ptr = new ParameterizedTypeReference<Resource<PipelineConfig>>() {};
+        Template template = this.getTemplate(templateName);
+        PipelineConfig pipelineConfig = new PipelineConfig()
+                .setName(pipelineName)
+                .setStages(template.getStages())
+                .setMaterials(Arrays.asList(Material.emptyGitRepo()))
+                .setTimer(null)
+                .setEnvironment_variables(Collections.emptyList())
+                .setEnable_pipeline_locking(false);
+        PipelineCreate pipelineCreate = new PipelineCreate(groupName, pipelineConfig);
+
+        ResponseEntity<Resource<PipelineConfig>> entity = this.restTemplate
+                .exchange(baseURI + "/api/admin/pipelines", POST, getV3Request(pipelineCreate),ptr);
+        return entity.getBody().getContent();
+    }
+
+    @Override
+    public Collection<PipelineGroup> getPipelineGroups() {
+        ParameterizedTypeReference<Collection<PipelineGroup>> ptr = new ParameterizedTypeReference<Collection<PipelineGroup>>() {};
+        ResponseEntity<Collection<PipelineGroup>> entity = this.restTemplate
+                .exchange(baseURI + "/api/config/pipeline_groups", GET, getStringRequest(), ptr);
+        return entity.getBody();
+    }
+
     private HttpEntity<String> getStringRequest() {
         return new HttpEntity<>(buildHttpHeaders());
     }
@@ -349,6 +370,14 @@ public class GoClientImpl implements GoClient {
 
     private HttpEntity<String> getV2Request() {
         return new HttpEntity<>(buildHttpHeaders("v2"));
+    }
+
+    private <T> HttpEntity<T> getV3Request(T req) {
+        return new HttpEntity<>(req, buildHttpHeaders("v3"));
+    }
+
+    private HttpEntity<String> getV3Request() {
+        return new HttpEntity<>(buildHttpHeaders("v3"));
     }
 
     private HttpHeaders buildHttpHeaders() {
@@ -371,6 +400,8 @@ public class GoClientImpl implements GoClient {
             headers.set("Accept", "application/vnd.go.cd.v1+json");
         } else if ("v2".equals(apiVersion)) {
             headers.set("Accept", "application/vnd.go.cd.v2+json");
+        } else if ("v3".equals(apiVersion)) {
+            headers.set("Accept", "application/vnd.go.cd.v3+json");
         } else {
             throw new RuntimeException(apiVersion + " version dose not match any go cd API");
         }

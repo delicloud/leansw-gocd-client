@@ -6,6 +6,8 @@ import com.thoughtworks.lean.gocd.dto.PipelineStatus;
 import com.thoughtworks.lean.gocd.dto.dashboard.DashBoard;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
+import com.thoughtworks.lean.gocd.dto.pipeline.PipelineConfig;
+import com.thoughtworks.lean.gocd.dto.pipeline.PipelineGroup;
 import com.thoughtworks.lean.gocd.dto.pipeline.Template;
 
 import java.util.Collection;
@@ -64,4 +66,8 @@ public interface GoClient {
     Collection<Template> getAllTemplates();
 
     Template getTemplate(String name);
+
+    PipelineConfig createPipelineFromTemplate(String pipelineName, String groupName, String templateName);
+
+    Collection<PipelineGroup> getPipelineGroups();
 }
