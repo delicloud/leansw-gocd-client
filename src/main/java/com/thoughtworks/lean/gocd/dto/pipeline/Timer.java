@@ -1,23 +1,37 @@
 package com.thoughtworks.lean.gocd.dto.pipeline;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class Timer {
 
     private String spec;
-    private Boolean only_on_changes;
+    @JsonProperty("only_on_changes")
+    private Boolean onlyOnChanges;
 
     public String getSpec() {
         return spec;
     }
 
-    public void setSpec(String spec) {
+    public Timer setSpec(String spec) {
         this.spec = spec;
+        return this;
     }
 
-    public Boolean getOnly_on_changes() {
-        return only_on_changes;
+    public Boolean getOnlyOnChanges() {
+        return onlyOnChanges;
     }
 
-    public void setOnly_on_changes(Boolean only_on_changes) {
-        this.only_on_changes = only_on_changes;
+    public Timer setOnlyOnChanges(Boolean onlyOnChanges) {
+        this.onlyOnChanges = onlyOnChanges;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("spec", spec)
+                .append("onlyOnChanges", onlyOnChanges)
+                .toString();
     }
 }

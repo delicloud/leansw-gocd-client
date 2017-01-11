@@ -1,74 +1,141 @@
 package com.thoughtworks.lean.gocd.dto.pipeline;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.List;
 
 public class Job {
 
     private String name = "defaultJob";
-    private String run_instance_count;
+
+    @JsonProperty("run_instance_count")
+    private String runInstanceCount;
+
     private Number timeout;
-    private List<EnvironmentVariables> environment_variables = new ArrayList<>();
-    private List<String> resources = new ArrayList<>();
-    private List<Task> tasks = new ArrayList<>();
+
+    @JsonProperty("environment_variables")
+    private List<EnvironmentVariable> environmentVariables;
+
+    private List<String> resources;
+
+    private List<Task> tasks;
+
+    private List<Tab> tabs;
+
+    private List<Artifact> artifacts;
+
+    private List<Property> properties;
+
+    @JsonProperty("elastic_profile_id")
+    private String elasticProfileId;
+
+    public Job() {
+    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public Job setName(String name) {
         this.name = name;
+        return this;
     }
 
-    public String getRun_instance_count() {
-        return run_instance_count;
+    public String getRunInstanceCount() {
+        return runInstanceCount;
     }
 
-    public void setRun_instance_count(String run_instance_count) {
-        this.run_instance_count = run_instance_count;
+    public Job setRunInstanceCount(String runInstanceCount) {
+        this.runInstanceCount = runInstanceCount;
+        return this;
     }
 
     public Number getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(Number timeout) {
+    public Job setTimeout(Number timeout) {
         this.timeout = timeout;
+        return this;
     }
 
-    public List<EnvironmentVariables> getEnvironment_variables() {
-        return environment_variables;
+    public List<EnvironmentVariable> getEnvironmentVariables() {
+        return environmentVariables;
     }
 
-    public void setEnvironment_variables(List<EnvironmentVariables> environment_variables) {
-        this.environment_variables = environment_variables;
+    public Job setEnvironmentVariables(List<EnvironmentVariable> environmentVariables) {
+        this.environmentVariables = environmentVariables;
+        return this;
     }
 
     public List<String> getResources() {
         return resources;
     }
 
-    public void setResources(List<String> resources) {
+    public Job setResources(List<String> resources) {
         this.resources = resources;
+        return this;
     }
 
     public List<Task> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List<Task> tasks) {
+    public Job setTasks(List<Task> tasks) {
         this.tasks = tasks;
+        return this;
+    }
+
+    public List<Tab> getTabs() {
+        return tabs;
+    }
+
+    public Job setTabs(List<Tab> tabs) {
+        this.tabs = tabs;
+        return this;
+    }
+
+    public List<Artifact> getArtifacts() {
+        return artifacts;
+    }
+
+    public Job setArtifacts(List<Artifact> artifacts) {
+        this.artifacts = artifacts;
+        return this;
+    }
+
+    public List<Property> getProperties() {
+        return properties;
+    }
+
+    public Job setProperties(List<Property> properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    public String getElasticProfileId() {
+        return elasticProfileId;
+    }
+
+    public Job setElasticProfileId(String elasticProfileId) {
+        this.elasticProfileId = elasticProfileId;
+        return this;
     }
 
     @Override
     public String toString() {
-        return "Job{" +
-                "name='" + name + '\'' +
-                ", run_instance_count='" + run_instance_count + '\'' +
-                ", timeout=" + timeout +
-                ", environment_variables=" + environment_variables +
-                ", resources=" + resources +
-                ", tasks=" + tasks +
-                '}';
+        return new ToStringBuilder(this)
+                .append("name", name)
+                .append("runInstanceCount", runInstanceCount)
+                .append("timeout", timeout)
+                .append("environmentVariables", environmentVariables)
+                .append("resources", resources)
+                .append("tasks", tasks)
+                .append("tabs", tabs)
+                .append("artifacts", artifacts)
+                .append("properties", properties)
+                .append("elasticProfileId", elasticProfileId)
+                .toString();
     }
 }

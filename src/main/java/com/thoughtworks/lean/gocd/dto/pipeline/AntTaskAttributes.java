@@ -7,48 +7,49 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.List;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
-public class ExecTaskAttributes implements TaskAttributes{
+public class AntTaskAttributes implements TaskAttributes{
 
     @JsonProperty("run_if")
-    List<String> runIf;
+    private List<String> runIf;
 
-    String command;
+    @JsonProperty("build_file")
+    private String buildFile;
 
-    List<String> arguments;
+    private String target;
 
     @JsonProperty("working_directory")
-    String workingDirectory;
+    private String workingDirectory;
 
     @JsonProperty("on_cancel")
-    Task onCancel;
+    private Task onCancel;
 
-    public ExecTaskAttributes() {
+    public AntTaskAttributes() {
     }
 
     public List<String> getRunIf() {
         return runIf;
     }
 
-    public ExecTaskAttributes setRunIf(List<String> runIf) {
+    public AntTaskAttributes setRunIf(List<String> runIf) {
         this.runIf = runIf;
         return this;
     }
 
-    public String getCommand() {
-        return command;
+    public String getBuildFile() {
+        return buildFile;
     }
 
-    public ExecTaskAttributes setCommand(String command) {
-        this.command = command;
+    public AntTaskAttributes setBuildFile(String buildFile) {
+        this.buildFile = buildFile;
         return this;
     }
 
-    public List<String> getArguments() {
-        return arguments;
+    public String getTarget() {
+        return target;
     }
 
-    public ExecTaskAttributes setArguments(List<String> arguments) {
-        this.arguments = arguments;
+    public AntTaskAttributes setTarget(String target) {
+        this.target = target;
         return this;
     }
 
@@ -56,7 +57,7 @@ public class ExecTaskAttributes implements TaskAttributes{
         return workingDirectory;
     }
 
-    public ExecTaskAttributes setWorkingDirectory(String workingDirectory) {
+    public AntTaskAttributes setWorkingDirectory(String workingDirectory) {
         this.workingDirectory = workingDirectory;
         return this;
     }
@@ -65,7 +66,7 @@ public class ExecTaskAttributes implements TaskAttributes{
         return onCancel;
     }
 
-    public ExecTaskAttributes setOnCancel(Task onCancel) {
+    public AntTaskAttributes setOnCancel(Task onCancel) {
         this.onCancel = onCancel;
         return this;
     }
@@ -74,8 +75,8 @@ public class ExecTaskAttributes implements TaskAttributes{
     public String toString() {
         return new ToStringBuilder(this)
                 .append("runIf", runIf)
-                .append("command", command)
-                .append("arguments", arguments)
+                .append("buildFile", buildFile)
+                .append("target", target)
                 .append("workingDirectory", workingDirectory)
                 .append("onCancel", onCancel)
                 .toString();

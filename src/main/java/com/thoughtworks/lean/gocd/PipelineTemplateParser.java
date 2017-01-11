@@ -45,7 +45,7 @@ public class PipelineTemplateParser {
             Stage stage = new Stage();
             stage.setJobs(toJobs(element.getElementsByTag("job")));
             stage.setName(element.attr("name"));
-            stage.setFetch_materials(Boolean.parseBoolean(element.attr("fetchmaterials")));
+            stage.setFetchMaterials(Boolean.parseBoolean(element.attr("fetchmaterials")));
             return stage;
         }).collect(Collectors.toList());
     }
@@ -82,7 +82,7 @@ public class PipelineTemplateParser {
         if("exec".equals(taskEle.tagName())){
             ExecTaskAttributes execTaskAttributes = new ExecTaskAttributes();
             execTaskAttributes.setCommand(taskEle.attr("command"));
-            execTaskAttributes.setRun_if(toTaskRunIfAttr(taskEle.getElementsByTag("runif")));
+            execTaskAttributes.setRunIf(toTaskRunIfAttr(taskEle.getElementsByTag("runif")));
             execTaskAttributes.setArguments(toTaskArgs(taskEle.getElementsByTag("arg")));
             return execTaskAttributes;
         }
@@ -133,7 +133,7 @@ public class PipelineTemplateParser {
             return null;
         }
         Timer timer = new Timer();
-        timer.setOnly_on_changes(Boolean.parseBoolean(timerEle.attr("onlyonchanges")));
+        timer.setOnlyOnChanges(Boolean.parseBoolean(timerEle.attr("onlyonchanges")));
         timer.setSpec(timerEle.text());
         return timer;
     }

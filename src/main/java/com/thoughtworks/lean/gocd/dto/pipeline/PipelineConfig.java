@@ -1,5 +1,7 @@
 package com.thoughtworks.lean.gocd.dto.pipeline;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -7,29 +9,38 @@ import java.util.List;
 
 public class PipelineConfig implements Serializable {
 
-
     private long id;
+
+    @JsonProperty("label_template")
+    private String labelTemplate;
+
+    @JsonProperty("enable_pipeline_locking")
+    private Boolean enablePipelineLocking;
 
     private String name;
 
-    private String groupName;
+    private String template;
+
+    private List<Parameter> parameters;
+
+    @JsonProperty("environment_variables")
+    private List<EnvironmentVariable> environmentVariables;
 
     private List<Material> materials;
 
     private List<Stage> stages;
 
-    private List<EnvironmentVariables> environment_variables;
+    @JsonProperty("tracking_tool")
+    private Trackingtool trackingtool;
+
+    private Timer timer;
 
     private boolean locked;
     private boolean paused;
     private boolean schedulable;
-
-    private boolean enable_pipeline_locking;
-    private Timer timer;
-
     private Date createDate;
-
     private String settingsPath;
+    private String groupName;
 
 
     public long getId() {
@@ -131,21 +142,57 @@ public class PipelineConfig implements Serializable {
         return this;
     }
 
-    public List<EnvironmentVariables> getEnvironment_variables() {
-        return environment_variables;
+    public List<EnvironmentVariable> getEnvironmentVariables() {
+        return environmentVariables;
     }
 
-    public PipelineConfig setEnvironment_variables(List<EnvironmentVariables> environment_variables) {
-        this.environment_variables = environment_variables;
+    public PipelineConfig setEnvironmentVariables(List<EnvironmentVariable> environmentVariables) {
+        this.environmentVariables = environmentVariables;
         return this;
     }
 
-    public boolean isEnable_pipeline_locking() {
-        return enable_pipeline_locking;
+    public String getLabelTemplate() {
+        return labelTemplate;
     }
 
-    public PipelineConfig setEnable_pipeline_locking(boolean enable_pipeline_locking) {
-        this.enable_pipeline_locking = enable_pipeline_locking;
+    public PipelineConfig setLabelTemplate(String labelTemplate) {
+        this.labelTemplate = labelTemplate;
+        return this;
+    }
+
+    public Boolean getEnablePipelineLocking() {
+        return enablePipelineLocking;
+    }
+
+    public PipelineConfig setEnablePipelineLocking(Boolean enablePipelineLocking) {
+        this.enablePipelineLocking = enablePipelineLocking;
+        return this;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public PipelineConfig setTemplate(String template) {
+        this.template = template;
+        return this;
+    }
+
+    public List<Parameter> getParameters() {
+        return parameters;
+    }
+
+    public PipelineConfig setParameters(List<Parameter> parameters) {
+        this.parameters = parameters;
+        return this;
+    }
+
+    public Trackingtool getTrackingtool() {
+        return trackingtool;
+    }
+
+    public PipelineConfig setTrackingtool(Trackingtool trackingtool) {
+        this.trackingtool = trackingtool;
         return this;
     }
 }

@@ -340,8 +340,8 @@ public class GoClientImpl implements GoClient {
                 .setStages(template.getStages())
                 .setMaterials(Arrays.asList(Material.emptyGitRepo()))
                 .setTimer(null)
-                .setEnvironment_variables(Collections.emptyList())
-                .setEnable_pipeline_locking(false);
+                .setEnvironmentVariables(Collections.emptyList())
+                .setEnablePipelineLocking(false);
         PipelineCreate pipelineCreate = new PipelineCreate(groupName, pipelineConfig);
 
         try {

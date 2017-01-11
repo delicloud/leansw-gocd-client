@@ -1,34 +1,43 @@
 package com.thoughtworks.lean.gocd.dto.pipeline;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
 public class PluggableTaskAttributes implements TaskAttributes {
-    List<String> run_if;
-    PluginConfiguration plugin_configuration;
+
+    @JsonProperty("run_if")
+    List<String> runIf;
+
+    @JsonProperty("plugin_configuration")
+    PluginConfiguration pluginConfiguration;
+
     List<Configuration> configuration;
-    Task on_cancel;
+
+    @JsonProperty("on_cancel")
+    Task onCancel;
 
     public PluggableTaskAttributes() {
     }
 
-    public List<String> getRun_if() {
-        return run_if;
+    public List<String> getRunIf() {
+        return runIf;
     }
 
-    public PluggableTaskAttributes setRun_if(List<String> run_if) {
-        this.run_if = run_if;
+    public PluggableTaskAttributes setRunIf(List<String> runIf) {
+        this.runIf = runIf;
         return this;
     }
 
-    public PluginConfiguration getPlugin_configuration() {
-        return plugin_configuration;
+    public PluginConfiguration getPluginConfiguration() {
+        return pluginConfiguration;
     }
 
-    public PluggableTaskAttributes setPlugin_configuration(PluginConfiguration plugin_configuration) {
-        this.plugin_configuration = plugin_configuration;
+    public PluggableTaskAttributes setPluginConfiguration(PluginConfiguration pluginConfiguration) {
+        this.pluginConfiguration = pluginConfiguration;
         return this;
     }
 
@@ -41,22 +50,22 @@ public class PluggableTaskAttributes implements TaskAttributes {
         return this;
     }
 
-    public Task getOn_cancel() {
-        return on_cancel;
+    public Task getOnCancel() {
+        return onCancel;
     }
 
-    public PluggableTaskAttributes setOn_cancel(Task on_cancel) {
-        this.on_cancel = on_cancel;
+    public PluggableTaskAttributes setOnCancel(Task onCancel) {
+        this.onCancel = onCancel;
         return this;
     }
 
     @Override
     public String toString() {
-        return "PluggableTaskAttributes{" +
-                "run_if=" + run_if +
-                ", plugin_configuration=" + plugin_configuration +
-                ", configuration=" + configuration +
-                ", on_cancel=" + on_cancel +
-                '}';
+        return new ToStringBuilder(this)
+                .append("runIf", runIf)
+                .append("pluginConfiguration", pluginConfiguration)
+                .append("configuration", configuration)
+                .append("onCancel", onCancel)
+                .toString();
     }
 }

@@ -1,27 +1,36 @@
 package com.thoughtworks.lean.gocd.dto.pipeline;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.List;
 
 public class Stage {
 
     private long id;
 
-    private Boolean fetch_materials = true;
-
     private String name;
 
-    private String pipelineName;
+    @JsonProperty("fetch_materials")
+    private Boolean fetchMaterials = true;
 
-    private Boolean clean_working_directory = false;
+    @JsonProperty("clean_working_directory")
+    private Boolean cleanWorkingDirectory = false;
 
-    private Boolean never_cleanup_artifacts = false;
-
-    private List<EnvironmentVariables> environment_variables;
+    @JsonProperty("never_cleanup_artifacts")
+    private Boolean neverCleanupArtifacts = false;
 
     private Approval approval;
 
-    private List<Job> jobs = new ArrayList<>();
+    @JsonProperty("environment_variables")
+    private List<EnvironmentVariable> environmentVariables;
+
+    private List<Job> jobs;
+
+    private String pipelineName;
+
+    public Stage() {
+    }
 
     public long getId() {
         return id;
@@ -29,11 +38,6 @@ public class Stage {
 
     public Stage setId(long id) {
         this.id = id;
-        return this;
-    }
-
-    public Stage setFetch_materials(Boolean fetch_materials) {
-        this.fetch_materials = fetch_materials;
         return this;
     }
 
@@ -46,12 +50,48 @@ public class Stage {
         return this;
     }
 
-    public String getPipelineName() {
-        return pipelineName;
+    public Boolean getFetchMaterials() {
+        return fetchMaterials;
     }
 
-    public Stage setPipelineName(String pipelineName) {
-        this.pipelineName = pipelineName;
+    public Stage setFetchMaterials(Boolean fetchMaterials) {
+        this.fetchMaterials = fetchMaterials;
+        return this;
+    }
+
+    public Boolean getCleanWorkingDirectory() {
+        return cleanWorkingDirectory;
+    }
+
+    public Stage setCleanWorkingDirectory(Boolean cleanWorkingDirectory) {
+        this.cleanWorkingDirectory = cleanWorkingDirectory;
+        return this;
+    }
+
+    public Boolean getNeverCleanupArtifacts() {
+        return neverCleanupArtifacts;
+    }
+
+    public Stage setNeverCleanupArtifacts(Boolean neverCleanupArtifacts) {
+        this.neverCleanupArtifacts = neverCleanupArtifacts;
+        return this;
+    }
+
+    public Approval getApproval() {
+        return approval;
+    }
+
+    public Stage setApproval(Approval approval) {
+        this.approval = approval;
+        return this;
+    }
+
+    public List<EnvironmentVariable> getEnvironmentVariables() {
+        return environmentVariables;
+    }
+
+    public Stage setEnvironmentVariables(List<EnvironmentVariable> environmentVariables) {
+        this.environmentVariables = environmentVariables;
         return this;
     }
 
@@ -64,44 +104,28 @@ public class Stage {
         return this;
     }
 
-    public Boolean getFetch_materials() {
-        return fetch_materials;
+    public String getPipelineName() {
+        return pipelineName;
     }
 
-    public Boolean getClean_working_directory() {
-        return clean_working_directory;
-    }
-
-    public Stage setClean_working_directory(Boolean clean_working_directory) {
-        this.clean_working_directory = clean_working_directory;
+    public Stage setPipelineName(String pipelineName) {
+        this.pipelineName = pipelineName;
         return this;
     }
 
-    public Boolean getNever_cleanup_artifacts() {
-        return never_cleanup_artifacts;
-    }
-
-    public Stage setNever_cleanup_artifacts(Boolean never_cleanup_artifacts) {
-        this.never_cleanup_artifacts = never_cleanup_artifacts;
-        return this;
-    }
-
-    public List<EnvironmentVariables> getEnvironment_variables() {
-        return environment_variables;
-    }
-
-    public Stage setEnvironment_variables(List<EnvironmentVariables> environment_variables) {
-        this.environment_variables = environment_variables;
-        return this;
-    }
-
-    public Approval getApproval() {
-        return approval;
-    }
-
-    public Stage setApproval(Approval approval) {
-        this.approval = approval;
-        return this;
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("name", name)
+                .append("fetchMaterials", fetchMaterials)
+                .append("cleanWorkingDirectory", cleanWorkingDirectory)
+                .append("neverCleanupArtifacts", neverCleanupArtifacts)
+                .append("approval", approval)
+                .append("environmentVariables", environmentVariables)
+                .append("jobs", jobs)
+                .append("pipelineName", pipelineName)
+                .toString();
     }
 }
 

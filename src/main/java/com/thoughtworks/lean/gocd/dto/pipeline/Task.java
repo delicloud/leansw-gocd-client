@@ -21,8 +21,14 @@ public class Task {
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
-    @JsonSubTypes({ @JsonSubTypes.Type(value = ExecTaskAttributes.class, name = "exec"),
-            @JsonSubTypes.Type(value = PluggableTaskAttributes.class, name = "pluggable_task") })
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = ExecTaskAttributes.class, name = "exec"),
+            @JsonSubTypes.Type(value = PluggableTaskAttributes.class, name = "pluggable_task"),
+            @JsonSubTypes.Type(value = AntTaskAttributes.class, name = "ant"),
+            @JsonSubTypes.Type(value = NantTaskAttributes.class, name = "nant"),
+            @JsonSubTypes.Type(value = RakeTaskAttributes.class, name = "rake"),
+            @JsonSubTypes.Type(value = FetchTaskAttributes.class, name = "fetch")
+    })
     public void setAttributes(TaskAttributes attributes) {
         this.attributes = attributes;
     }
