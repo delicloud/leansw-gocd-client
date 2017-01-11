@@ -70,4 +70,9 @@ public interface GoClient {
     PipelineConfig createPipelineFromTemplate(String pipelineName, String groupName, String templateName);
 
     Collection<PipelineGroup> getPipelineGroups();
+
+    PipelineConfig getPipelineConfig(String name);
+
+    Template createTemplateFromPipeline(String templateName, String pipelineName);
+
 }

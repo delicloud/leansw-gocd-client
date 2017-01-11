@@ -59,9 +59,9 @@ public class GoClientImpl implements GoClient {
     private RestTemplate restTemplate;
 
     @Autowired
-    public GoClientImpl( RestTemplate restTemplate,
-            @Value("${gocd.uri}") String baseURL, @Value("${gocd.username}") String username,
-            @Value("${gocd.password}") String password) {
+    public GoClientImpl(RestTemplate restTemplate,
+                        @Value("${gocd.uri}") String baseURL, @Value("${gocd.username}") String username,
+                        @Value("${gocd.password}") String password) {
         this.baseURI = baseURL;
         this.username = username;
         this.password = password;
@@ -330,7 +330,8 @@ public class GoClientImpl implements GoClient {
 
     @Override
     public PipelineConfig createPipelineFromTemplate(String pipelineName, String groupName, String templateName) {
-        ParameterizedTypeReference<Resource<PipelineConfig>> ptr = new ParameterizedTypeReference<Resource<PipelineConfig>>() {};
+        ParameterizedTypeReference<Resource<PipelineConfig>> ptr = new ParameterizedTypeReference<Resource<PipelineConfig>>() {
+        };
         Template template = this.getTemplate(templateName);
         PipelineConfig pipelineConfig = new PipelineConfig()
                 .setName(pipelineName)
@@ -342,16 +343,40 @@ public class GoClientImpl implements GoClient {
         PipelineCreate pipelineCreate = new PipelineCreate(groupName, pipelineConfig);
 
         ResponseEntity<Resource<PipelineConfig>> entity = this.restTemplate
-                .exchange(baseURI + "/api/admin/pipelines", POST, getV3Request(pipelineCreate),ptr);
+                .exchange(baseURI + "/api/admin/pipelines", POST, getV3Request(pipelineCreate), ptr);
         return entity.getBody().getContent();
     }
 
     @Override
     public Collection<PipelineGroup> getPipelineGroups() {
-        ParameterizedTypeReference<Collection<PipelineGroup>> ptr = new ParameterizedTypeReference<Collection<PipelineGroup>>() {};
+        ParameterizedTypeReference<Collection<PipelineGroup>> ptr = new ParameterizedTypeReference<Collection<PipelineGroup>>() {
+        };
         ResponseEntity<Collection<PipelineGroup>> entity = this.restTemplate
                 .exchange(baseURI + "/api/config/pipeline_groups", GET, getStringRequest(), ptr);
         return entity.getBody();
+    }
+
+    @Override
+    public PipelineConfig getPipelineConfig(String name) {
+        ParameterizedTypeReference<Resource<PipelineConfig>> ptr = new ParameterizedTypeReference<Resource<PipelineConfig>>() {
+        };
+        ResponseEntity<Resource<PipelineConfig>> entity = this.restTemplate
+                .exchange(baseURI + "/api/admin/pipelines/" + name, GET, getV3Request(), ptr);
+        return entity.getBody().getContent();
+    }
+
+    @Override
+    public Template createTemplateFromPipeline(String templateName, String pipelineName) {
+        PipelineConfig config = this.getPipelineConfig(pipelineName);
+        Template template = new Template()
+                .setName(templateName)
+                .setStages(config.getStages());
+        ParameterizedTypeReference<Resource<Template>> ptr = new ParameterizedTypeReference<Resource<Template>>() {
+        };
+        ResponseEntity<Resource<Template>> entity = this.restTemplate
+                .exchange(baseURI + "/api/admin/templates", POST, getV2Request(template)
+                        , ptr);
+        return entity.getBody().getContent();
     }
 
     private HttpEntity<String> getStringRequest() {

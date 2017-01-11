@@ -7,6 +7,7 @@ import com.thoughtworks.lean.gocd.dto.dashboard.DashBoard;
 import com.thoughtworks.lean.gocd.dto.history.Job;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistory;
 import com.thoughtworks.lean.gocd.dto.history.PipelineHistoryResult;
+import com.thoughtworks.lean.gocd.dto.pipeline.PipelineConfig;
 import com.thoughtworks.lean.gocd.dto.pipeline.PipelineGroup;
 import com.thoughtworks.lean.gocd.dto.pipeline.Template;
 import org.junit.Before;
@@ -21,9 +22,7 @@ import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @Ignore
 public class GoClientImplTest {
@@ -185,5 +184,19 @@ public class GoClientImplTest {
         Collection<PipelineGroup> groups = goClient.getPipelineGroups();
         assertTrue(groups.size() > 0);
 
+    }
+
+    @Test
+    public void should_get_pipeline_config_by_name() throws Exception {
+        PipelineConfig config = goClient.getPipelineConfig("test-pipeline-2");
+        assertEquals("defaultStage",config.getStages().get(0).getName());
+    }
+
+    @Test
+    @Ignore
+    public void should_create_template_from_pipeline() throws Exception {
+        Template template = goClient.createTemplateFromPipeline("new-template", "test-pipeline-2");
+        PipelineConfig config = goClient.getPipelineConfig("test-pipeline-2");
+        assertEquals(template.getStages().get(0).getName(),config.getStages().get(0).getName());
     }
 }

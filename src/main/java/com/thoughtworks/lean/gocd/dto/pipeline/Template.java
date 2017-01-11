@@ -18,15 +18,17 @@ public class Template {
         return name;
     }
 
-    public void setName(String name) {
+    public Template setName(String name) {
         this.name = name;
+        return this;
     }
 
     public List<Stage> getStages() {
         return stages;
     }
 
-    public void setStages(List<Stage> stages) {
+    public Template setStages(List<Stage> stages) {
         this.stages = stages;
+        return this;
     }
 }
