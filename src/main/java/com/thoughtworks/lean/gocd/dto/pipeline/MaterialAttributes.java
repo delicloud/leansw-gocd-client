@@ -1,4 +1,4 @@
 package com.thoughtworks.lean.gocd.dto.pipeline;
 
-public interface Attributes {
+public interface MaterialAttributes {
 }

@@ -162,7 +162,7 @@ public class GoClientImplTest {
 
     @Test
     public void should_get_template() throws Exception {
-        Template template = goClient.getTemplate("test-template12");
+        Template template = goClient.getTemplate("test-template1");
         assertNotNull(template);
     }
 
@@ -182,7 +182,7 @@ public class GoClientImplTest {
 
     @Test
     public void should_get_pipeline_config_by_name() throws Exception {
-        PipelineConfig config = goClient.getPipelineConfig("test-pipeline-21");
+        PipelineConfig config = goClient.getPipelineConfig("test-pipeline-2");
         assertEquals("defaultStage",config.getStages().get(0).getName());
     }
 

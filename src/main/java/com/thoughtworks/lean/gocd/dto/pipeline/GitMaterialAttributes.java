@@ -1,19 +1,36 @@
 package com.thoughtworks.lean.gocd.dto.pipeline;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
-public class GitMaterialAttributes implements Attributes{
+public class GitMaterialAttributes implements MaterialAttributes {
 
     private String name;
+
     private String url;
+
     private String branch;
+
     private String destination;
-    private Boolean auto_update=true;
+
+    @JsonProperty("auto_update")
+    private Boolean autoUpdate = true;
+
     private Filter filter;
-    private String submodule_folder;
-    private Boolean invert_filter=false;
-    private Boolean shallow_clone=false;
+
+    @JsonProperty("invert_filter")
+    private Boolean invertFilter = false;
+
+    @JsonProperty("submodule_folder")
+    private String submoduleFolder;
+
+    @JsonProperty("shallow_clone")
+    private Boolean shallowClone = false;
+
+    public GitMaterialAttributes() {
+    }
 
     public String getName() {
         return name;
@@ -51,12 +68,12 @@ public class GitMaterialAttributes implements Attributes{
         return this;
     }
 
-    public Boolean getAuto_update() {
-        return auto_update;
+    public Boolean getAutoUpdate() {
+        return autoUpdate;
     }
 
-    public GitMaterialAttributes setAuto_update(Boolean auto_update) {
-        this.auto_update = auto_update;
+    public GitMaterialAttributes setAutoUpdate(Boolean autoUpdate) {
+        this.autoUpdate = autoUpdate;
         return this;
     }
 
@@ -69,43 +86,45 @@ public class GitMaterialAttributes implements Attributes{
         return this;
     }
 
-    public String getSubmodule_folder() {
-        return submodule_folder;
+    public Boolean getInvertFilter() {
+        return invertFilter;
     }
 
-    public GitMaterialAttributes setSubmodule_folder(String submodule_folder) {
-        this.submodule_folder = submodule_folder;
+    public GitMaterialAttributes setInvertFilter(Boolean invertFilter) {
+        this.invertFilter = invertFilter;
         return this;
     }
 
-    public Boolean getInvert_filter() {
-        return invert_filter;
+    public String getSubmoduleFolder() {
+        return submoduleFolder;
     }
 
-    public GitMaterialAttributes setInvert_filter(Boolean invert_filter) {
-        this.invert_filter = invert_filter;
+    public GitMaterialAttributes setSubmoduleFolder(String submoduleFolder) {
+        this.submoduleFolder = submoduleFolder;
         return this;
     }
 
-    public Boolean getShallow_clone() {
-        return shallow_clone;
+    public Boolean getShallowClone() {
+        return shallowClone;
     }
 
-    public GitMaterialAttributes setShallow_clone(Boolean shallow_clone) {
-        this.shallow_clone = shallow_clone;
+    public GitMaterialAttributes setShallowClone(Boolean shallowClone) {
+        this.shallowClone = shallowClone;
         return this;
     }
 
     @Override
     public String toString() {
-        return "GitMaterialAttributes{" +
-                "name='" + name + '\'' +
-                ", url='" + url + '\'' +
-                ", branch='" + branch + '\'' +
-                ", destination='" + destination + '\'' +
-                ", auto_update=" + auto_update +
-                ", filter=" + filter +
-                ", submodule_folder='" + submodule_folder + '\'' +
-                '}';
+        return new ToStringBuilder(this)
+                .append("name", name)
+                .append("url", url)
+                .append("branch", branch)
+                .append("destination", destination)
+                .append("autoUpdate", autoUpdate)
+                .append("filter", filter)
+                .append("invertFilter", invertFilter)
+                .append("submoduleFolder", submoduleFolder)
+                .append("shallowClone", shallowClone)
+                .toString();
     }
 }

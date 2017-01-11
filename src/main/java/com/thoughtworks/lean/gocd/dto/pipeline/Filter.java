@@ -1,13 +1,16 @@
 package com.thoughtworks.lean.gocd.dto.pipeline;
 
 public class Filter {
-    private String[] ignore;
+    private String ignore;
 
-    public String[] getIgnore() {
+    public Filter() {
+    }
+
+    public String getIgnore() {
         return ignore;
     }
 
-    public Filter setIgnore(String[] ignore) {
+    public Filter setIgnore(String ignore) {
         this.ignore = ignore;
         return this;
     }

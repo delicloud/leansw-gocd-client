@@ -107,7 +107,7 @@ public class PipelineTemplateParser {
         }).collect(Collectors.toList());
     }
 
-    private Attributes toAttribute(Element element) {
+    private MaterialAttributes toAttribute(Element element) {
         // TODO: (other else)
         String tag = element.tagName();
         if ("git".equals(tag)) {

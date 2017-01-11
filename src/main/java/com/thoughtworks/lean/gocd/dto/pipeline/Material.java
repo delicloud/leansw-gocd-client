@@ -9,7 +9,7 @@ public class Material {
     private String pipelineName;
     private String type;
     private String description;
-    private Attributes attributes;
+    private MaterialAttributes attributes;
 
     public long getId() {
         return id;
@@ -47,13 +47,20 @@ public class Material {
         return this;
     }
 
-    public Attributes getAttributes() {
+    public MaterialAttributes getAttributes() {
         return attributes;
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
-    @JsonSubTypes({ @JsonSubTypes.Type(value = GitMaterialAttributes.class, name = "git")})
-    public Material setAttributes(Attributes attributes) {
+    @JsonSubTypes({@JsonSubTypes.Type(value = GitMaterialAttributes.class, name = "git"),
+            @JsonSubTypes.Type(value = SvnMaterialAttributes.class, name = "svn"),
+            @JsonSubTypes.Type(value = MercurialMaterialAttributes.class, name = "hg"),
+            @JsonSubTypes.Type(value = PerforceMaterialAttributes.class, name = "p4"),
+            @JsonSubTypes.Type(value = TfsMaterialAttributes.class, name = "tfs"),
+            @JsonSubTypes.Type(value = DependencyMaterialAttributes.class, name = "dependency"),
+            @JsonSubTypes.Type(value = PackageMaterialAttributes.class, name = "package"),
+            @JsonSubTypes.Type(value = PluginMaterialAttributes.class, name = "plugin")})
+    public Material setAttributes(MaterialAttributes attributes) {
         this.attributes = attributes;
         return this;
     }
@@ -64,7 +71,7 @@ public class Material {
                 .setAttributes(new GitMaterialAttributes()
                         .setUrl("git@github.com:sample_repo/example.git")
                         .setDestination("dest")
-                        .setAuto_update(true)
+                        .setAutoUpdate(true)
                         .setBranch("master"));
     }
 }

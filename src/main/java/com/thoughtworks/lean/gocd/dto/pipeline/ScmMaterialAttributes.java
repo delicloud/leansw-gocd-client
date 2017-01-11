@@ -1,6 +1,6 @@
 package com.thoughtworks.lean.gocd.dto.pipeline;
 
-public class ScmMaterialAttributes implements Attributes{
+public class ScmMaterialAttributes implements MaterialAttributes {
     private String ref;
 
     public String getRef() {
