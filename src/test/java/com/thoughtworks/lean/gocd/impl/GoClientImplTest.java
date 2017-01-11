@@ -36,12 +36,6 @@ public class GoClientImplTest {
     }
 
     @Test
-    public void should_fetch_pipeline_config() {
-        String configuration = goClient.getPipelineConfiguration("identity-server");
-        //System.out.println(configuration);
-    }
-
-    @Test
     public void should_return_dash_board() {
         DashBoard dashBoard = goClient.getDashBoard();
         assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
@@ -168,8 +162,8 @@ public class GoClientImplTest {
 
     @Test
     public void should_get_template() throws Exception {
-        Template template = goClient.getTemplate("test-template1");
-        assertEquals(2,template.getStages().size());
+        Template template = goClient.getTemplate("test-template12");
+        assertNotNull(template);
     }
 
     @Test
@@ -188,7 +182,7 @@ public class GoClientImplTest {
 
     @Test
     public void should_get_pipeline_config_by_name() throws Exception {
-        PipelineConfig config = goClient.getPipelineConfig("test-pipeline-2");
+        PipelineConfig config = goClient.getPipelineConfig("test-pipeline-21");
         assertEquals("defaultStage",config.getStages().get(0).getName());
     }
 

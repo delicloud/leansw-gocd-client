@@ -23,6 +23,7 @@ import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -157,10 +158,6 @@ public class GoClientImpl implements GoClient {
         );
     }
 
-    public String getPipelineConfiguration(String pipelineName) {
-        ResponseEntity<String> response = restTemplate.exchange(baseURI + ADMIN_PIPELINES + "/" + pipelineName, GET, new HttpEntity<String>(buildHttpHeaders("v1")), String.class);
-        return response.getBody();
-    }
 
     @Override
     @Cacheable("gocd_pipelineInstance")
@@ -309,29 +306,34 @@ public class GoClientImpl implements GoClient {
 
     @Override
     public Collection<Template> getAllTemplates() {
-
-        ParameterizedTypeReference<Resources<Template>> ptr = new ParameterizedTypeReference<Resources<Template>>() {
-        };
-
-        ResponseEntity<Resources<Template>> entity =
-                this.restTemplate.exchange(baseURI + "/api/admin/templates", GET, getV2Request(), ptr);
-
-        return entity.getBody().getContent();
+        try {
+            ParameterizedTypeReference<Resources<Template>> ptr = new ParameterizedTypeReference<Resources<Template>>() {
+            };
+            ResponseEntity<Resources<Template>> entity =
+                    this.restTemplate.exchange(baseURI + "/api/admin/templates", GET, getV2Request(), ptr);
+            return entity.getBody().getContent();
+        } catch (HttpClientErrorException e) {
+            LOG.warn("Can not get all templates, will return an empty list.");
+        }
+        return Collections.emptyList();
     }
 
     @Override
     public Template getTemplate(String name) {
-        ParameterizedTypeReference<Resource<Template>> ptr = new ParameterizedTypeReference<Resource<Template>>() {
-        };
-        ResponseEntity<Resource<Template>> entity = this.restTemplate
-                .exchange(baseURI + "/api/admin/templates/" + name, GET, getV2Request(), ptr);
-        return entity.getBody().getContent();
+        try {
+            ParameterizedTypeReference<Resource<Template>> ptr = new ParameterizedTypeReference<Resource<Template>>() {
+            };
+            ResponseEntity<Resource<Template>> entity = this.restTemplate
+                    .exchange(baseURI + "/api/admin/templates/" + name, GET, getV2Request(), ptr);
+            return entity.getBody().getContent();
+        } catch (HttpClientErrorException e) {
+            LOG.error("Can not get Template: {}, Make sure it exists.", name);
+        }
+        return null;
     }
 
     @Override
     public PipelineConfig createPipelineFromTemplate(String pipelineName, String groupName, String templateName) {
-        ParameterizedTypeReference<Resource<PipelineConfig>> ptr = new ParameterizedTypeReference<Resource<PipelineConfig>>() {
-        };
         Template template = this.getTemplate(templateName);
         PipelineConfig pipelineConfig = new PipelineConfig()
                 .setName(pipelineName)
@@ -342,27 +344,44 @@ public class GoClientImpl implements GoClient {
                 .setEnable_pipeline_locking(false);
         PipelineCreate pipelineCreate = new PipelineCreate(groupName, pipelineConfig);
 
-        ResponseEntity<Resource<PipelineConfig>> entity = this.restTemplate
-                .exchange(baseURI + "/api/admin/pipelines", POST, getV3Request(pipelineCreate), ptr);
-        return entity.getBody().getContent();
+        try {
+            ParameterizedTypeReference<Resource<PipelineConfig>> ptr = new ParameterizedTypeReference<Resource<PipelineConfig>>() {
+            };
+            ResponseEntity<Resource<PipelineConfig>> entity = this.restTemplate
+                    .exchange(baseURI + "/api/admin/pipelines", POST, getV3Request(pipelineCreate), ptr);
+            return entity.getBody().getContent();
+        } catch (HttpClientErrorException e) {
+            LOG.error("Can not create pipeline from template: {}, May be pipeline group {} dose not exist.", templateName, groupName);
+        }
+        return null;
     }
 
     @Override
     public Collection<PipelineGroup> getPipelineGroups() {
-        ParameterizedTypeReference<Collection<PipelineGroup>> ptr = new ParameterizedTypeReference<Collection<PipelineGroup>>() {
-        };
-        ResponseEntity<Collection<PipelineGroup>> entity = this.restTemplate
-                .exchange(baseURI + "/api/config/pipeline_groups", GET, getStringRequest(), ptr);
-        return entity.getBody();
+        try {
+            ParameterizedTypeReference<Collection<PipelineGroup>> ptr = new ParameterizedTypeReference<Collection<PipelineGroup>>() {
+            };
+            ResponseEntity<Collection<PipelineGroup>> entity = this.restTemplate
+                    .exchange(baseURI + "/api/config/pipeline_groups", GET, getStringRequest(), ptr);
+            return entity.getBody();
+        }catch (HttpClientErrorException e) {
+            LOG.warn("Can not get pipeline groups, will return an empty list.");
+        }
+        return Collections.emptyList();
     }
 
     @Override
     public PipelineConfig getPipelineConfig(String name) {
-        ParameterizedTypeReference<Resource<PipelineConfig>> ptr = new ParameterizedTypeReference<Resource<PipelineConfig>>() {
-        };
-        ResponseEntity<Resource<PipelineConfig>> entity = this.restTemplate
-                .exchange(baseURI + "/api/admin/pipelines/" + name, GET, getV3Request(), ptr);
-        return entity.getBody().getContent();
+        try {
+            ParameterizedTypeReference<Resource<PipelineConfig>> ptr = new ParameterizedTypeReference<Resource<PipelineConfig>>() {
+            };
+            ResponseEntity<Resource<PipelineConfig>> entity = this.restTemplate
+                    .exchange(baseURI + "/api/admin/pipelines/" + name, GET, getV3Request(), ptr);
+            return entity.getBody().getContent();
+        } catch (HttpClientErrorException e) {
+            LOG.error("Can not get PipelineConfig of Pipeline: {}, Make sure it exists.", name);
+        }
+        return null;
     }
 
     @Override
@@ -371,12 +390,17 @@ public class GoClientImpl implements GoClient {
         Template template = new Template()
                 .setName(templateName)
                 .setStages(config.getStages());
-        ParameterizedTypeReference<Resource<Template>> ptr = new ParameterizedTypeReference<Resource<Template>>() {
-        };
-        ResponseEntity<Resource<Template>> entity = this.restTemplate
-                .exchange(baseURI + "/api/admin/templates", POST, getV2Request(template)
-                        , ptr);
-        return entity.getBody().getContent();
+        try {
+            ParameterizedTypeReference<Resource<Template>> ptr = new ParameterizedTypeReference<Resource<Template>>() {
+            };
+            ResponseEntity<Resource<Template>> entity = this.restTemplate
+                    .exchange(baseURI + "/api/admin/templates", POST, getV2Request(template)
+                            , ptr);
+            return entity.getBody().getContent();
+        } catch (HttpClientErrorException e) {
+            LOG.error("Can not create template from pipeline {}.", pipelineName);
+        }
+        return null;
     }
 
     private HttpEntity<String> getStringRequest() {

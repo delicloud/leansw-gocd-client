@@ -21,8 +21,6 @@ public interface GoClient {
 
     PipelineHistoryResult getPipelineHistory(String pipelineName, int offset, boolean complete);
 
-    String getPipelineConfiguration(String pipelineName);
-
     Map getPipelineInstance(String pipelineName, String counter);
 
     PipelineHistory getPipelineInstance(String pipelineName, int counter);
