@@ -13,7 +13,6 @@ import com.thoughtworks.lean.gocd.dto.pipeline.Template;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
 import java.util.Map;
@@ -32,7 +31,7 @@ public class GoClientImplTest {
     @Before
     public void setup() {
         String goHost = "http://gocd-server:8153/go/";
-        goClient = new GoClientImpl(new RestTemplate(), goHost, "admin", "badger");
+        goClient = new GoClientImpl(goHost, "admin", "badger");
     }
 
     @Test

@@ -13,7 +13,6 @@ import com.thoughtworks.lean.gocd.dto.pipeline.*;
 import com.thoughtworks.lean.gocd.util.NumberUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -22,7 +21,6 @@ import org.springframework.hateoas.Resources;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -36,7 +34,6 @@ import java.util.*;
 import static org.springframework.http.HttpMethod.*;
 
 @Component
-@RestController
 public class GoClientImpl implements GoClient {
 
     private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(GoClient.class);
@@ -59,14 +56,12 @@ public class GoClientImpl implements GoClient {
 
     private RestTemplate restTemplate;
 
-    @Autowired
-    public GoClientImpl(RestTemplate restTemplate,
-                        @Value("${gocd.uri}") String baseURL, @Value("${gocd.username}") String username,
+    public GoClientImpl(@Value("${gocd.uri}") String baseURL, @Value("${gocd.username}") String username,
                         @Value("${gocd.password}") String password) {
         this.baseURI = baseURL;
         this.username = username;
         this.password = password;
-        this.restTemplate = restTemplate;
+        this.restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setConnectTimeout(TIMEOUT);
         requestFactory.setReadTimeout(TIMEOUT);
@@ -364,7 +359,7 @@ public class GoClientImpl implements GoClient {
             ResponseEntity<Collection<PipelineGroup>> entity = this.restTemplate
                     .exchange(baseURI + "/api/config/pipeline_groups", GET, getStringRequest(), ptr);
             return entity.getBody();
-        }catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException e) {
             LOG.warn("Can not get pipeline groups, will return an empty list.");
         }
         return Collections.emptyList();
