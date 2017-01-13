@@ -305,10 +305,10 @@ public class GoClientImpl implements GoClient {
             ParameterizedTypeReference<Resources<Template>> ptr = new ParameterizedTypeReference<Resources<Template>>() {
             };
             ResponseEntity<Resources<Template>> entity =
-                    this.restTemplate.exchange(baseURI + "/api/admin/templates", GET, getV2Request(), ptr);
+                    this.restTemplate.exchange(baseURI + "/api/admin/templates", GET, getV3Request(), ptr);
             return entity.getBody().getContent();
         } catch (HttpClientErrorException e) {
-            LOG.warn("Can not get all templates, will return an empty list.");
+            LOG.error("Can not get all templates, will return an empty list. Message: {}, Response: {}.", e.getMessage(), e.getResponseBodyAsString());
         }
         return Collections.emptyList();
     }
@@ -322,7 +322,8 @@ public class GoClientImpl implements GoClient {
                     .exchange(baseURI + "/api/admin/templates/" + name, GET, getV2Request(), ptr);
             return entity.getBody().getContent();
         } catch (HttpClientErrorException e) {
-            LOG.error("Can not get Template: {}, Make sure it exists.", name);
+            LOG.error("Can not get Template: {}, Make sure it exists. Message: {}, Response: {}.",
+                    name, e.getMessage(), e.getResponseBodyAsString());
         }
         return null;
     }
@@ -332,6 +333,7 @@ public class GoClientImpl implements GoClient {
         Template template = this.getTemplate(templateName);
         PipelineConfig pipelineConfig = new PipelineConfig()
                 .setName(pipelineName)
+                .setLabelTemplate("${COUNT}")
                 .setStages(template.getStages())
                 .setMaterials(Arrays.asList(Material.emptyGitRepo()))
                 .setTimer(null)
@@ -346,7 +348,8 @@ public class GoClientImpl implements GoClient {
                     .exchange(baseURI + "/api/admin/pipelines", POST, getV3Request(pipelineCreate), ptr);
             return entity.getBody().getContent();
         } catch (HttpClientErrorException e) {
-            LOG.error("Can not create pipeline from template: {}, May be pipeline group {} dose not exist.", templateName, groupName);
+            LOG.error("Can not create pipeline from template: {}, May be pipeline group {} dose not exist. Message: {}, Response: {}.",
+                    templateName, groupName, e.getMessage(), e.getResponseBodyAsString());
         }
         return null;
     }
@@ -360,7 +363,8 @@ public class GoClientImpl implements GoClient {
                     .exchange(baseURI + "/api/config/pipeline_groups", GET, getStringRequest(), ptr);
             return entity.getBody();
         } catch (HttpClientErrorException e) {
-            LOG.warn("Can not get pipeline groups, will return an empty list.");
+            LOG.warn("Can not get pipeline groups, will return an empty list. Message: {}, Response: {}.",
+                    e.getMessage(), e.getResponseBodyAsString());
         }
         return Collections.emptyList();
     }
@@ -374,7 +378,8 @@ public class GoClientImpl implements GoClient {
                     .exchange(baseURI + "/api/admin/pipelines/" + name, GET, getV3Request(), ptr);
             return entity.getBody().getContent();
         } catch (HttpClientErrorException e) {
-            LOG.error("Can not get PipelineConfig of Pipeline: {}, Make sure it exists.", name);
+            LOG.error("Can not get PipelineConfig of Pipeline: {}, Make sure it exists. Message: {}, Response: {}.",
+                    name, e.getMessage(), e.getResponseBodyAsString());
         }
         return null;
     }
@@ -393,7 +398,8 @@ public class GoClientImpl implements GoClient {
                             , ptr);
             return entity.getBody().getContent();
         } catch (HttpClientErrorException e) {
-            LOG.error("Can not create template from pipeline {}.", pipelineName);
+            LOG.error("Can not create template from pipeline {}. Message: {}, Response: {}.",
+                    pipelineName, e.getMessage(), e.getResponseBodyAsString());
         }
         return null;
     }

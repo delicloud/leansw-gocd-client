@@ -156,7 +156,7 @@ public class GoClientImplTest {
     @Test
     public void should_get_all_templates() throws Exception {
         Collection<Template> templateLsit = goClient.getAllTemplates();
-        templateLsit.stream().map(Template::getName).forEach(System.out::println);
+        assertTrue(templateLsit.size()>0);
     }
 
     @Test
@@ -169,7 +169,8 @@ public class GoClientImplTest {
     @Ignore
     public void should_create_new_pipeline_using_template() throws Exception {
         Template template = goClient.getTemplate("test-template1");
-        goClient.createPipelineFromTemplate("new-test-template1","test" , "test-template1");
+        PipelineConfig config = goClient.createPipelineFromTemplate("new-test-template1","test" , "test-template1");
+        assertEquals(config.getStages().size(), template.getStages().size());
     }
 
     @Test
