@@ -153,10 +153,11 @@ public class GoClientImplTest {
         goClient.resume("test-pipeline-1");
     }
 
+    @Ignore
     @Test
     public void should_get_all_templates() throws Exception {
         Collection<Template> templateLsit = goClient.getAllTemplates();
-        assertTrue(templateLsit.size()>0);
+        assertTrue(templateLsit.size() > 0);
     }
 
     @Test
@@ -169,7 +170,7 @@ public class GoClientImplTest {
     @Ignore
     public void should_create_new_pipeline_using_template() throws Exception {
         Template template = goClient.getTemplate("test-template1");
-        PipelineConfig config = goClient.createPipelineFromTemplate("new-test-template1","test" , "test-template1");
+        PipelineConfig config = goClient.createPipelineFromTemplate("new-test-template1", "test", "test-template1");
         assertEquals(config.getStages().size(), template.getStages().size());
     }
 
@@ -183,7 +184,7 @@ public class GoClientImplTest {
     @Test
     public void should_get_pipeline_config_by_name() throws Exception {
         PipelineConfig config = goClient.getPipelineConfig("test-pipeline-2");
-        assertEquals("defaultStage",config.getStages().get(0).getName());
+        assertEquals("defaultStage", config.getStages().get(0).getName());
     }
 
     @Test
@@ -191,6 +192,6 @@ public class GoClientImplTest {
     public void should_create_template_from_pipeline() throws Exception {
         Template template = goClient.createTemplateFromPipeline("new-template", "test-pipeline-2");
         PipelineConfig config = goClient.getPipelineConfig("test-pipeline-2");
-        assertEquals(template.getStages().get(0).getName(),config.getStages().get(0).getName());
+        assertEquals(template.getStages().get(0).getName(), config.getStages().get(0).getName());
     }
 }
