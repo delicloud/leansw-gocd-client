@@ -13,11 +13,14 @@ import com.thoughtworks.lean.gocd.dto.pipeline.*;
 import com.thoughtworks.lean.gocd.util.NumberUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
+import org.springframework.hateoas.mvc.TypeConstrainedMappingJackson2HttpMessageConverter;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
@@ -61,11 +64,6 @@ public class GoClientImpl implements GoClient {
         this.baseURI = baseURL;
         this.username = username;
         this.password = password;
-        this.restTemplate = new RestTemplate();
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(TIMEOUT);
-        requestFactory.setReadTimeout(TIMEOUT);
-        this.restTemplate.setRequestFactory(requestFactory);
     }
 
     @Override
@@ -305,7 +303,7 @@ public class GoClientImpl implements GoClient {
             ParameterizedTypeReference<Resources<Template>> ptr = new ParameterizedTypeReference<Resources<Template>>() {
             };
             ResponseEntity<Resources<Template>> entity =
-                    this.restTemplate.exchange(baseURI + "/api/admin/templates", GET, getV3Request(), ptr);
+                    this.restTemplate.exchange(baseURI + "/api/admin/templates", GET, getV2Request(), ptr);
             return entity.getBody().getContent();
         } catch (HttpClientErrorException e) {
             LOG.error("Can not get all templates, will return an empty list. Message: {}, Response: {}.", e.getMessage(), e.getResponseBodyAsString());
@@ -402,6 +400,24 @@ public class GoClientImpl implements GoClient {
                     pipelineName, e.getMessage(), e.getResponseBodyAsString());
         }
         return null;
+    }
+
+    @Autowired
+    public GoClientImpl setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(TIMEOUT);
+        requestFactory.setReadTimeout(TIMEOUT);
+        this.restTemplate.setRequestFactory(requestFactory);
+        this.restTemplate.getMessageConverters()
+                .stream()
+                .filter(converter -> converter instanceof TypeConstrainedMappingJackson2HttpMessageConverter)
+                .forEach( httpMessageConverter ->
+                        ((TypeConstrainedMappingJackson2HttpMessageConverter) httpMessageConverter)
+                                .setSupportedMediaTypes(Arrays.asList(
+                                        MediaType.APPLICATION_JSON,
+                                        new MediaType("application", "vnd.go.cd.v2+json"))));
+        return this;
     }
 
     private HttpEntity<String> getStringRequest() {
