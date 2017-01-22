@@ -3,6 +3,7 @@ package com.thoughtworks.lean.gocd.impl;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.lean.gocd.config.ApplicationConfig;
+import com.thoughtworks.lean.gocd.config.TestApplicationConfig;
 import com.thoughtworks.lean.gocd.dto.AgentInfo;
 import com.thoughtworks.lean.gocd.dto.AgentsInfoResponse;
 import com.thoughtworks.lean.gocd.dto.PipelineStatus;
@@ -23,6 +24,7 @@ import org.springframework.hateoas.hal.Jackson2HalModule;
 import org.springframework.hateoas.mvc.TypeConstrainedMappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -40,8 +42,9 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@ActiveProfiles("test")
 // ApplicationContext will be loaded from the static inner ContextConfiguration class
-@ContextConfiguration(loader=AnnotationConfigContextLoader.class, classes = ApplicationConfig.class)
+@ContextConfiguration(loader=AnnotationConfigContextLoader.class, classes = {ApplicationConfig.class, TestApplicationConfig.class})
 public class GoClientImplTest {
 
     @Autowired
