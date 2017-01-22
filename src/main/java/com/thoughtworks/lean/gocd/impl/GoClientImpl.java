@@ -19,7 +19,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
-import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.mvc.TypeConstrainedMappingJackson2HttpMessageConverter;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -367,6 +366,8 @@ public class GoClientImpl implements GoClient {
         return Collections.emptyList();
     }
 
+
+
     @Override
     public PipelineConfig getPipelineConfig(String name) {
         try {
@@ -402,6 +403,7 @@ public class GoClientImpl implements GoClient {
         return null;
     }
 
+
     @Autowired
     public GoClientImpl setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -412,11 +414,14 @@ public class GoClientImpl implements GoClient {
         this.restTemplate.getMessageConverters()
                 .stream()
                 .filter(converter -> converter instanceof TypeConstrainedMappingJackson2HttpMessageConverter)
-                .forEach( httpMessageConverter ->
+                .forEach(httpMessageConverter ->
                         ((TypeConstrainedMappingJackson2HttpMessageConverter) httpMessageConverter)
                                 .setSupportedMediaTypes(Arrays.asList(
                                         MediaType.APPLICATION_JSON,
-                                        new MediaType("application", "vnd.go.cd.v2+json"))));
+                                        MediaType.valueOf("application/vnd.go.cd.v1+json"),
+                                        MediaType.valueOf("application/vnd.go.cd.v2+json"),
+                                        MediaType.valueOf("application/vnd.go.cd.v3+json")
+                                )));
         return this;
     }
 
@@ -428,6 +433,10 @@ public class GoClientImpl implements GoClient {
         HttpHeaders headers = buildHttpHeaders();
         headers.add(header, value);
         return new HttpEntity<>(headers);
+    }
+
+    private HttpEntity<String> getV1Request() {
+        return new HttpEntity<>(buildHttpHeaders("v1"));
     }
 
     private <T> HttpEntity<T> getV2Request(T req) {

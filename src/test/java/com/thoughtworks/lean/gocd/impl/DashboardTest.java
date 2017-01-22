@@ -15,17 +15,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-/**
- * Created by yongliuli on 11/29/16.
- */
 public class DashboardTest {
 
     @Test
     public void check_dashboard_domain_value_exist() throws IOException {
         DashBoard dashBoard = JSONUtil.parseJSON(Resources.toString(this.getClass().getResource("/test_dashboard.json"), UTF_8), DashBoard.class);
-        assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
-        assertThat(getDashboardFirstPipelineInstance(dashBoard).getEmbedded().getStages().get(0).getStatus(), notNullValue());
-        assertThat(getDashboardFirstPipelineInstance(dashBoard).getEmbedded().getStages().get(0).getName(), notNullValue());
+        assertThat(dashBoard.getPipelineGroups(), notNullValue());
+        assertThat(getDashboardFirstPipelineInstance(dashBoard).getStages().get(0).getStatus(), notNullValue());
+        assertThat(getDashboardFirstPipelineInstance(dashBoard).getStages().get(0).getName(), notNullValue());
         assertThat(getDashboardFirstPipeline(dashBoard).getPauseInfo(), notNullValue());
         assertThat(getDashboardFirstPipelineInstance(dashBoard).getScheduleAt(), notNullValue());
         assertThat(getDashboardFirstPipelineInstance(dashBoard).getTriggeredBy(), notNullValue());
@@ -41,7 +38,7 @@ public class DashboardTest {
         DashBoard dashBoard1 = JSONUtil.parseJSON(Resources.toString(this.getClass().getResource("/test_dashboard.json"), UTF_8), DashBoard.class);
 
         assertEquals(dashBoard, dashBoard1);
-        getDashboardFirstPipelineInstance(dashBoard1).getEmbedded().getStages().get(0).getLinks().get("self").setHref("1");
+        getDashboardFirstPipelineInstance(dashBoard1).getStages().get(0).getLinks().get("self").setHref("1");
         assertNotEquals(dashBoard, dashBoard1);
         assertNotEquals(getDashboardFirstPipeline(dashBoard), getDashboardFirstPipeline(dashBoard1));
 
@@ -51,11 +48,14 @@ public class DashboardTest {
 
 
     private PipelineInstance getDashboardFirstPipelineInstance(DashBoard dashBoard) {
-        return getDashboardFirstPipeline(dashBoard).getEmbedded().getInstances().get(0);
+        return getDashboardFirstPipeline(dashBoard).getInstances()
+                .stream().findFirst().get();
     }
 
     private Pipeline getDashboardFirstPipeline(DashBoard dashBoard1) {
-        return dashBoard1.getEmbedded().getPipelineGroups().get(0).getEmbedded().getPipelines().get(0);
+        return dashBoard1.getPipelineGroups().stream()
+                .findFirst().get().getPipelines()
+                .stream().findFirst().get();
     }
 
 }

@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 
-/**
- * Created by yongliuli on 8/16/16.
- */
 public class Stage {
     String name;
     String status;
@@ -60,4 +57,6 @@ public class Stage {
         result = 31 * result + (links != null ? links.hashCode() : 0);
         return result;
     }
+
+
 }

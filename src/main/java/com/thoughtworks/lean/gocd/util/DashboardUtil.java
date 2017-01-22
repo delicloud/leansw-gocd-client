@@ -16,13 +16,13 @@ public class DashboardUtil {
     }
 
     public static Set<String> getPipelineGroupNames(DashBoard dashBoard) {
-        return dashBoard.getEmbedded().getPipelineGroups().stream()
+        return dashBoard.getPipelineGroups().stream()
                 .map(PipelineGroup::getName).collect(Collectors.toSet());
     }
 
     public static Stream<Pipeline> toPipelineStream(DashBoard dashBoard) {
-        return dashBoard.getEmbedded().getPipelineGroups().stream()
-                .flatMap(pipelineGroup -> pipelineGroup.getEmbedded().getPipelines().stream());
+        return dashBoard.getPipelineGroups().stream()
+                .flatMap(pipelineGroup -> pipelineGroup.getPipelines().stream());
     }
 
 

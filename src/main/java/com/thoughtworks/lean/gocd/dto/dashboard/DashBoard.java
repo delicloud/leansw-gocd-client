@@ -1,20 +1,30 @@
 package com.thoughtworks.lean.gocd.dto.dashboard;
 
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Created by yongliuli on 8/16/16.
- */
-public class DashBoard {
-    @JsonProperty("_embedded")
-    EmbeddedPipelineGroups embedded;
+import java.util.Collection;
+import java.util.Map;
 
-    public EmbeddedPipelineGroups getEmbedded() {
-        return embedded;
+public class DashBoard {
+
+
+    private Collection<PipelineGroup> pipelineGroups;
+
+    public DashBoard() {
     }
 
-    public DashBoard setEmbedded(EmbeddedPipelineGroups embedded) {
-        this.embedded = embedded;
+    @JsonProperty("_embedded")
+    private void unpackObjectsFromEmbededObject(Map<String, Collection<PipelineGroup>> embeded) {
+        pipelineGroups = embeded.get("pipeline_groups");
+    }
+
+    public Collection<PipelineGroup> getPipelineGroups() {
+        return pipelineGroups;
+    }
+
+    public DashBoard setPipelineGroups(Collection<PipelineGroup> pipelineGroups) {
+        this.pipelineGroups = pipelineGroups;
         return this;
     }
 
@@ -25,12 +35,12 @@ public class DashBoard {
 
         DashBoard dashBoard = (DashBoard) o;
 
-        return embedded != null ? embedded.equals(dashBoard.embedded) : dashBoard.embedded == null;
+        return pipelineGroups != null ? pipelineGroups.equals(dashBoard.pipelineGroups) : dashBoard.pipelineGroups == null;
 
     }
 
     @Override
     public int hashCode() {
-        return embedded != null ? embedded.hashCode() : 0;
+        return pipelineGroups != null ? pipelineGroups.hashCode() : 0;
     }
 }

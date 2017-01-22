@@ -1,8 +1,5 @@
 package com.thoughtworks.lean.gocd.dto.dashboard;
 
-/**
- * Created by yongliuli on 11/29/16.
- */
 public class Link {
     private String href;
     public String getHref() {

@@ -1,29 +1,42 @@
 package com.thoughtworks.lean.gocd.dto.dashboard;
 
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
-/**
- * Created by yongliuli on 8/16/16.
- */
 public class PipelineInstance {
-
 
     private String label;
     @JsonProperty("schedule_at")
     private Date scheduleAt;
     @JsonProperty("triggered_by")
     private String triggeredBy;
-    @JsonProperty("_embedded")
-    private EmbeddedStages embedded;
-
     @JsonProperty("_links")
     Map<String,Link> links;
 
+    private List<Stage> stages;
+
+    public PipelineInstance() {
+    }
+
+    @JsonProperty("_embedded")
+    private void unpackObjectsFromEmbededObject(Map<String, List<Stage>> embeded) {
+        stages = embeded.get("stages");
+    }
+
+    public List<Stage> getStages() {
+        return stages;
+    }
+
+    public PipelineInstance setStages(List<Stage> stages) {
+        this.stages = stages;
+        return this;
+    }
 
     public String getLabel() {
         return label;
@@ -52,15 +65,6 @@ public class PipelineInstance {
         return this;
     }
 
-    public EmbeddedStages getEmbedded() {
-        return embedded;
-    }
-
-    public PipelineInstance setEmbedded(EmbeddedStages embedded) {
-        this.embedded = embedded;
-        return this;
-    }
-
     public Map<String, Link> getLinks() {
         return links;
     }
@@ -82,7 +86,7 @@ public class PipelineInstance {
                 .append(label, that.label)
                 .append(scheduleAt, that.scheduleAt)
                 .append(triggeredBy, that.triggeredBy)
-                .append(embedded, that.embedded)
+                .append(stages, that.stages)
                 .append(links, that.links)
                 .isEquals();
     }
@@ -93,7 +97,7 @@ public class PipelineInstance {
                 .append(label)
                 .append(scheduleAt)
                 .append(triggeredBy)
-                .append(embedded)
+                .append(stages)
                 .append(links)
                 .toHashCode();
     }

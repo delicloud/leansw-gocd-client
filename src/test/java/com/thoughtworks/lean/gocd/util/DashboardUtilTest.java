@@ -22,7 +22,7 @@ public class DashboardUtilTest {
     @Test
     public void check_pipeline_names() throws IOException {
         DashBoard dashBoard = JSONUtil.parseJSON(Resources.toString(this.getClass().getResource("/test_dashboard_2.json"), UTF_8), DashBoard.class);
-        assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
+        assertThat(dashBoard.getPipelineGroups(), notNullValue());
         assertThat(DashboardUtil.getPipelineNames(dashBoard).size(), equalTo(3));
         assertTrue(DashboardUtil.getPipelineNames(dashBoard).contains("test-pipeline-3"));
     }
@@ -31,7 +31,7 @@ public class DashboardUtilTest {
     public void check_pipelineGroup_names() throws IOException {
         //given
         DashBoard dashBoard = JSONUtil.parseJSON(Resources.toString(this.getClass().getResource("/test_dashboard_2.json"), UTF_8), DashBoard.class);
-        assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
+        assertThat(dashBoard.getPipelineGroups(), notNullValue());
         //when then
         assertThat(DashboardUtil.getPipelineGroupNames(dashBoard).size(), equalTo(1));
         assertTrue(DashboardUtil.getPipelineGroupNames(dashBoard).contains("test"));

@@ -1,18 +1,19 @@
 package com.thoughtworks.lean.gocd.dto.dashboard;
 
-/**
- * Created by yongliuli on 8/16/16.
- */
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PauseInfo {
-    private boolean paused;
+    private Boolean paused;
+    @JsonProperty("paused_by")
     private String pausedBy;
+    @JsonProperty("pause_reason")
     private String pauseReason;
 
-    public boolean isPaused() {
+    public Boolean isPaused() {
         return paused;
     }
 
-    public PauseInfo setPaused(boolean paused) {
+    public PauseInfo setPaused(Boolean paused) {
         this.paused = paused;
         return this;
     }

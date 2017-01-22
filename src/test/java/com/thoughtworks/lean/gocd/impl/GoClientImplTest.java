@@ -1,5 +1,8 @@
 package com.thoughtworks.lean.gocd.impl;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.lean.gocd.config.ApplicationConfig;
 import com.thoughtworks.lean.gocd.dto.AgentInfo;
 import com.thoughtworks.lean.gocd.dto.AgentsInfoResponse;
 import com.thoughtworks.lean.gocd.dto.PipelineStatus;
@@ -13,9 +16,21 @@ import com.thoughtworks.lean.gocd.dto.pipeline.Template;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.hal.Jackson2HalModule;
+import org.springframework.hateoas.mvc.TypeConstrainedMappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertNotNull;
@@ -24,29 +39,49 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-@Ignore
+@RunWith(SpringJUnit4ClassRunner.class)
+// ApplicationContext will be loaded from the static inner ContextConfiguration class
+@ContextConfiguration(loader=AnnotationConfigContextLoader.class, classes = ApplicationConfig.class)
 public class GoClientImplTest {
 
+    @Autowired
     private GoClientImpl goClient;
+
+    public RestTemplate getRestTemplateWithHalMessageConverter() {
+        RestTemplate restTemplate = new RestTemplate();
+        List<HttpMessageConverter<?>> existingConverters = restTemplate.getMessageConverters();
+        List<HttpMessageConverter<?>> newConverters = new ArrayList<>();
+        newConverters.add(getHalMessageConverter());
+        newConverters.addAll(existingConverters);
+        restTemplate.setMessageConverters(newConverters);
+        return restTemplate;
+    }
+
+    private HttpMessageConverter getHalMessageConverter() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new Jackson2HalModule());
+        objectMapper.configure(
+                DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        MappingJackson2HttpMessageConverter halConverter = new TypeConstrainedMappingJackson2HttpMessageConverter(ResourceSupport.class);
+        halConverter.setObjectMapper(objectMapper);
+        return halConverter;
+    }
 
     @Before
     public void setup() {
-        String goHost = "http://gocd-server:8153/go/";
-        goClient = new GoClientImpl(goHost, "admin", "badger");
-        goClient.setRestTemplate(new RestTemplate());
+        goClient.setRestTemplate(getRestTemplateWithHalMessageConverter());
     }
 
     @Test
     public void should_return_dash_board() {
         DashBoard dashBoard = goClient.getDashBoard();
-        assertThat(dashBoard.getEmbedded().getPipelineGroups(), notNullValue());
+        assertThat(dashBoard.getPipelineGroups(), notNullValue());
     }
 
 
     @Test
     public void should_fetch_pipeline_instance() {
         PipelineHistory pipelineHistory = goClient.getPipelineInstance("cd-metrics-ui", 1);
-        //System.out.println(configuration.toString());
         assertNotNull(pipelineHistory);
         assertTrue(pipelineHistory.getDuration() > 0);
         assertNotNull(pipelineHistory.getResult());
@@ -56,7 +91,6 @@ public class GoClientImplTest {
     @Test
     public void should_fetch_pipeline_instance_incomplete() {
         PipelineHistory pipelineHistory = goClient.getPipelineInstance("cd-metrics-ui", 1, false);
-        //System.out.println(configuration.toString());
         assertNotNull(pipelineHistory);
         assertTrue(pipelineHistory.getDuration() == 0);
         assertNull(pipelineHistory.getResult());
@@ -65,14 +99,12 @@ public class GoClientImplTest {
     @Test
     public void should_fetch_pipeline_job_log() {
         String log = goClient.fetchCruiseLog("cd-metrics-ui", 628, "check", 1, "eslint_kamar_test");
-        //System.out.println(log);
     }
 
     @Test
     public void should_fetch_pipeline_job_properites() {
 
         Map properties = goClient.fetchJobProperties("cd-metrics-ui", 410, "check", 1, "eslint");
-        //System.out.println(properties);
         assertEquals(Integer.parseInt(properties.get("cruise_pipeline_counter").toString()), 410);
     }
 
@@ -155,7 +187,6 @@ public class GoClientImplTest {
         goClient.resume("test-pipeline-1");
     }
 
-    @Ignore
     @Test
     public void should_get_all_templates() throws Exception {
         Collection<Template> templateLsit = goClient.getAllTemplates();
@@ -166,6 +197,7 @@ public class GoClientImplTest {
     public void should_get_template() throws Exception {
         Template template = goClient.getTemplate("test-template1");
         assertNotNull(template);
+        assertTrue(template.getStages().size() > 0);
     }
 
     @Test

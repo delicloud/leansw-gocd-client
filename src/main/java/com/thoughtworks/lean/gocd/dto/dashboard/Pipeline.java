@@ -2,17 +2,25 @@ package com.thoughtworks.lean.gocd.dto.dashboard;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Created by yongliuli on 8/16/16.
- */
+import java.util.Collection;
+import java.util.Map;
+
 public class Pipeline {
 
     private String name;
     private boolean locked;
     @JsonProperty("pause_info")
     private PauseInfo pauseInfo;
+
+    Collection<PipelineInstance> instances;
+
+    public Pipeline() {
+    }
+
     @JsonProperty("_embedded")
-    private EmbeddedInstances embedded;
+    private void unpackObjectsFromEmbededObject(Map<String, Collection<PipelineInstance>> embeded) {
+        instances = embeded.get("instances");
+    }
 
     public String getName() {
         return name;
@@ -23,12 +31,25 @@ public class Pipeline {
         return this;
     }
 
-    public EmbeddedInstances getEmbedded() {
-        return embedded;
+    public Collection<PipelineInstance> getInstances() {
+        return instances;
     }
 
-    public Pipeline setEmbedded(EmbeddedInstances embedded) {
-        this.embedded = embedded;
+    public Pipeline setInstances(Collection<PipelineInstance> instances) {
+        this.instances = instances;
+        return this;
+    }
+
+    public Pipeline(String name) {
+        this.name = name;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public Pipeline setLocked(boolean locked) {
+        this.locked = locked;
         return this;
     }
 
@@ -38,15 +59,6 @@ public class Pipeline {
 
     public Pipeline setPauseInfo(PauseInfo pauseInfo) {
         this.pauseInfo = pauseInfo;
-        return this;
-    }
-
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public Pipeline setLocked(boolean locked) {
-        this.locked = locked;
         return this;
     }
 
@@ -60,7 +72,7 @@ public class Pipeline {
         if (locked != pipeline.locked) return false;
         if (name != null ? !name.equals(pipeline.name) : pipeline.name != null) return false;
         if (pauseInfo != null ? !pauseInfo.equals(pipeline.pauseInfo) : pipeline.pauseInfo != null) return false;
-        return embedded != null ? embedded.equals(pipeline.embedded) : pipeline.embedded == null;
+        return instances != null ? instances.equals(pipeline.instances) : pipeline.instances == null;
 
     }
 
@@ -69,7 +81,7 @@ public class Pipeline {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (locked ? 1 : 0);
         result = 31 * result + (pauseInfo != null ? pauseInfo.hashCode() : 0);
-        result = 31 * result + (embedded != null ? embedded.hashCode() : 0);
+        result = 31 * result + (instances != null ? instances.hashCode() : 0);
         return result;
     }
 }
