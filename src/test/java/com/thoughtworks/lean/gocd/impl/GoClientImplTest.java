@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("test")
 // ApplicationContext will be loaded from the static inner ContextConfiguration class
-@ContextConfiguration(loader=AnnotationConfigContextLoader.class, classes = {ApplicationConfig.class, TestApplicationConfig.class})
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {ApplicationConfig.class, TestApplicationConfig.class})
 public class GoClientImplTest {
 
     @Autowired
@@ -230,5 +230,15 @@ public class GoClientImplTest {
         Template template = goClient.createTemplateFromPipeline("new-template", "test-pipeline-2");
         PipelineConfig config = goClient.getPipelineConfig("test-pipeline-2");
         assertEquals(template.getStages().get(0).getName(), config.getStages().get(0).getName());
+    }
+
+    @Ignore
+    @Test
+    public void should_get_all_pipeline_status() throws Exception {
+        DashBoard dashBoard = goClient.getDashBoard();
+        dashBoard.getPipelineGroups()
+                .forEach(pipelineGroup -> pipelineGroup.getPipelines()
+                        .forEach(pipeline -> System.out.println(pipeline.getName() + " | " + pipeline.getCurrentStatus())));
+
     }
 }

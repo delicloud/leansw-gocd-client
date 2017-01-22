@@ -2,12 +2,13 @@ package com.thoughtworks.lean.gocd.dto.dashboard;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PipelineInstance {
 
@@ -72,6 +73,14 @@ public class PipelineInstance {
     public PipelineInstance setLinks(Map<String, Link> links) {
         this.links = links;
         return this;
+    }
+
+    @JsonProperty("status")
+    public String getStatus(){
+        List<Stage> reversedStages = Lists.reverse(this.stages.subList(0, stages.size()));
+        return reversedStages.stream()
+                .filter(stage -> !"Unknown".equals(stage.getStatus()))
+                .findFirst().get().getStatus();
     }
 
     @Override

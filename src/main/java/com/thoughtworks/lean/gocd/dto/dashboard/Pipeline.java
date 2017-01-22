@@ -2,7 +2,7 @@ package com.thoughtworks.lean.gocd.dto.dashboard;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class Pipeline {
@@ -12,13 +12,13 @@ public class Pipeline {
     @JsonProperty("pause_info")
     private PauseInfo pauseInfo;
 
-    Collection<PipelineInstance> instances;
+    List<PipelineInstance> instances;
 
     public Pipeline() {
     }
 
     @JsonProperty("_embedded")
-    private void unpackObjectsFromEmbededObject(Map<String, Collection<PipelineInstance>> embeded) {
+    private void unpackObjectsFromEmbededObject(Map<String, List<PipelineInstance>> embeded) {
         instances = embeded.get("instances");
     }
 
@@ -31,11 +31,11 @@ public class Pipeline {
         return this;
     }
 
-    public Collection<PipelineInstance> getInstances() {
+    public List<PipelineInstance> getInstances() {
         return instances;
     }
 
-    public Pipeline setInstances(Collection<PipelineInstance> instances) {
+    public Pipeline setInstances(List<PipelineInstance> instances) {
         this.instances = instances;
         return this;
     }
@@ -60,6 +60,11 @@ public class Pipeline {
     public Pipeline setPauseInfo(PauseInfo pauseInfo) {
         this.pauseInfo = pauseInfo;
         return this;
+    }
+
+    @JsonProperty("current_status")
+    public String getCurrentStatus() {
+        return this.instances.size() > 0 ? this.instances.get(0).getStatus() : "Waiting";
     }
 
     @Override
