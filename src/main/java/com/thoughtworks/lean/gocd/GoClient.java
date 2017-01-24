@@ -65,7 +65,7 @@ public interface GoClient {
 
     Template getTemplate(String name);
 
-    PipelineConfig createPipelineFromTemplate(String pipelineName, String groupName, String templateName);
+    PipelineConfig createPipelineFromTemplate(String pipelineName, String groupName, String templateName, String gitRepo, String branch);
 
     Collection<PipelineGroup> getPipelineGroups();
 

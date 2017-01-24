@@ -203,11 +203,11 @@ public class GoClientImplTest {
         assertTrue(template.getStages().size() > 0);
     }
 
-    @Test
     @Ignore
+    @Test
     public void should_create_new_pipeline_using_template() throws Exception {
         Template template = goClient.getTemplate("test-template1");
-        PipelineConfig config = goClient.createPipelineFromTemplate("new-test-template1", "test", "test-template1");
+        PipelineConfig config = goClient.createPipelineFromTemplate("new-test-template1", "test", "test-template1", "git@github.com:tw-leansw/leansw-gocd-agent-docker.git", "other-branch");
         assertEquals(config.getStages().size(), template.getStages().size());
     }
 

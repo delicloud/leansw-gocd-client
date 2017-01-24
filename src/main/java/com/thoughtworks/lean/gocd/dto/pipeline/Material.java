@@ -74,4 +74,14 @@ public class Material {
                         .setAutoUpdate(true)
                         .setBranch("master"));
     }
+
+    public static Material gitRepo(String repoUrl, String branch) {
+        return new Material()
+                .setType("git")
+                .setAttributes(new GitMaterialAttributes()
+                        .setUrl(repoUrl)
+                        .setDestination("dest")
+                        .setAutoUpdate(true)
+                        .setBranch(branch));
+    }
 }

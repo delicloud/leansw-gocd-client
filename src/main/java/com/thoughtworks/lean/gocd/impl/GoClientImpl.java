@@ -326,13 +326,13 @@ public class GoClientImpl implements GoClient {
     }
 
     @Override
-    public PipelineConfig createPipelineFromTemplate(String pipelineName, String groupName, String templateName) {
+    public PipelineConfig createPipelineFromTemplate(String pipelineName, String groupName, String templateName, String gitRepo, String branch) {
         Template template = this.getTemplate(templateName);
         PipelineConfig pipelineConfig = new PipelineConfig()
                 .setName(pipelineName)
                 .setLabelTemplate("${COUNT}")
                 .setStages(template.getStages())
-                .setMaterials(Arrays.asList(Material.emptyGitRepo()))
+                .setMaterials(Arrays.asList(Material.gitRepo(gitRepo, branch)))
                 .setTimer(null)
                 .setEnvironmentVariables(Collections.emptyList())
                 .setEnablePipelineLocking(false);
