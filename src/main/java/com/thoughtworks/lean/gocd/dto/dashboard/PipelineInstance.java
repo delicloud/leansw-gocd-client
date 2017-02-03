@@ -78,9 +78,18 @@ public class PipelineInstance {
     @JsonProperty("status")
     public String getStatus(){
         List<Stage> reversedStages = Lists.reverse(this.stages.subList(0, stages.size()));
-        return reversedStages.stream()
+        List<Stage> noUnknownStages = reversedStages.stream()
                 .filter(stage -> !"Unknown".equals(stage.getStatus()))
-                .findFirst().get().getStatus();
+                .collect(Collectors.toList());
+        if (noUnknownStages.size() < reversedStages.size()) {
+            Optional<Stage> lastNotUnknownStage = noUnknownStages.stream().findFirst();
+            return lastNotUnknownStage
+                    .map(stage -> stage.getStatus().equals("Passed")
+                            ? "Manual"
+                            : stage.getStatus())
+                    .orElse("Waiting");
+        }
+        return noUnknownStages.stream().findFirst().get().getStatus();
     }
 
     @Override
