@@ -27,6 +27,9 @@ public class DashboardUtil {
 
 
     public static Set<String> getPipelineNeedUpdate(DashBoard oldDashboard, DashBoard newDashBoard) {
+        if (oldDashboard == null) {
+            return getPipelineNames(newDashBoard);
+        }
         Map<String, Pipeline> oldPipelineMap = toPipelineStream(oldDashboard).collect(Collectors.toMap(Pipeline::getName, e -> e));
         return toPipelineStream(newDashBoard)
                 .filter(pipeline -> !pipeline.equals(oldPipelineMap.get(pipeline.getName())))
