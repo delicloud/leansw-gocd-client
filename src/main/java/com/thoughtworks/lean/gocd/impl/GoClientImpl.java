@@ -229,7 +229,7 @@ public class GoClientImpl implements GoClient {
 
     @Override
     public AgentsInfoResponse fetchAllAgents() {
-        ResponseEntity<AgentsInfoResponse> response = this.restTemplate.exchange(baseURI + "/api/agents", GET, getV2Request(), AgentsInfoResponse.class);
+        ResponseEntity<AgentsInfoResponse> response = this.restTemplate.exchange(baseURI + "/api/agents", GET, getV4Request(), AgentsInfoResponse.class);
         return response.getBody();
     }
 
@@ -455,6 +455,14 @@ public class GoClientImpl implements GoClient {
         return new HttpEntity<>(buildHttpHeaders("v3"));
     }
 
+    private <T> HttpEntity<T> getV4Request(T req) {
+        return new HttpEntity<>(req, buildHttpHeaders("v4"));
+    }
+
+    private HttpEntity<String> getV4Request() {
+        return new HttpEntity<>(buildHttpHeaders("v4"));
+    }
+
     private HttpHeaders buildHttpHeaders() {
         byte[] plainCredsBytes = (this.username + ":" + this.password).getBytes();
         byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
@@ -477,7 +485,9 @@ public class GoClientImpl implements GoClient {
             headers.set("Accept", "application/vnd.go.cd.v2+json");
         } else if ("v3".equals(apiVersion)) {
             headers.set("Accept", "application/vnd.go.cd.v3+json");
-        } else {
+        } else if ("v4".equals(apiVersion)) {
+            headers.set("Accept", "application/vnd.go.cd.v4+json");
+        }else {
             throw new RuntimeException(apiVersion + " version dose not match any go cd API");
         }
 

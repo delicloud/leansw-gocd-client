@@ -101,7 +101,7 @@ public class GoClientImplTest {
 
     @Test
     public void should_fetch_pipeline_job_log() {
-        String log = goClient.fetchCruiseLog("cd-metrics-ui", 628, "check", 1, "eslint_kamar_test");
+        String log = goClient.fetchCruiseLog("cd-metrics-ui", 655, "check", 1, "eslint_kamar_test");
     }
 
     @Test
@@ -112,6 +112,7 @@ public class GoClientImplTest {
     }
 
     @Test
+    @Ignore
     public void should_get_go_cd_agent_info() {
         AgentInfo agentInfo = goClient.getAgent("5362b3ab-1a25-4c55-af36-8db31cbaffab");
         assertEquals("4cb11329123d", agentInfo.getHostname());
