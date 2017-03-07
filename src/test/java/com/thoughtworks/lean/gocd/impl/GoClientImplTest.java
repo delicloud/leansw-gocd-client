@@ -50,29 +50,9 @@ public class GoClientImplTest {
     @Autowired
     private GoClientImpl goClient;
 
-    public RestTemplate getRestTemplateWithHalMessageConverter() {
-        RestTemplate restTemplate = new RestTemplate();
-        List<HttpMessageConverter<?>> existingConverters = restTemplate.getMessageConverters();
-        List<HttpMessageConverter<?>> newConverters = new ArrayList<>();
-        newConverters.add(getHalMessageConverter());
-        newConverters.addAll(existingConverters);
-        restTemplate.setMessageConverters(newConverters);
-        return restTemplate;
-    }
-
-    private HttpMessageConverter getHalMessageConverter() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new Jackson2HalModule());
-        objectMapper.configure(
-                DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        MappingJackson2HttpMessageConverter halConverter = new TypeConstrainedMappingJackson2HttpMessageConverter(ResourceSupport.class);
-        halConverter.setObjectMapper(objectMapper);
-        return halConverter;
-    }
-
     @Before
     public void setup() {
-        goClient.setRestTemplate(getRestTemplateWithHalMessageConverter());
+        goClient.setRestTemplate(new RestTemplate());
     }
 
     @Test

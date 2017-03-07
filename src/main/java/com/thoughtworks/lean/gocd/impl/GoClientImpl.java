@@ -1,5 +1,7 @@
 package com.thoughtworks.lean.gocd.impl;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.opencsv.CSVReader;
 import com.thoughtworks.lean.exception.ParseException;
@@ -18,10 +20,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.hal.Jackson2HalModule;
 import org.springframework.hateoas.mvc.TypeConstrainedMappingJackson2HttpMessageConverter;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
@@ -32,6 +38,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpMethod.*;
 
@@ -411,6 +418,7 @@ public class GoClientImpl implements GoClient {
         requestFactory.setConnectTimeout(TIMEOUT);
         requestFactory.setReadTimeout(TIMEOUT);
         this.restTemplate.setRequestFactory(requestFactory);
+        this.setRestTemplateWithHalMessageConverter(this.restTemplate);
         this.restTemplate.getMessageConverters()
                 .stream()
                 .filter(converter -> converter instanceof TypeConstrainedMappingJackson2HttpMessageConverter)
@@ -420,9 +428,31 @@ public class GoClientImpl implements GoClient {
                                         MediaType.APPLICATION_JSON,
                                         MediaType.valueOf("application/vnd.go.cd.v1+json"),
                                         MediaType.valueOf("application/vnd.go.cd.v2+json"),
-                                        MediaType.valueOf("application/vnd.go.cd.v3+json")
+                                        MediaType.valueOf("application/vnd.go.cd.v3+json"),
+                                        MediaType.valueOf("application/vnd.go.cd.v4+json")
                                 )));
         return this;
+    }
+
+    public void setRestTemplateWithHalMessageConverter(RestTemplate restTemplate) {
+        List<HttpMessageConverter<?>> existingConverters = restTemplate.getMessageConverters();
+        long filteredCnt = existingConverters.stream().filter(converter -> converter instanceof TypeConstrainedMappingJackson2HttpMessageConverter).count();
+        if (filteredCnt == 0) {
+            List<HttpMessageConverter<?>> newConverters = new ArrayList<>();
+            newConverters.add(getHalMessageConverter());
+            newConverters.addAll(existingConverters);
+            restTemplate.setMessageConverters(newConverters);
+        }
+    }
+
+    private HttpMessageConverter getHalMessageConverter() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new Jackson2HalModule());
+        objectMapper.configure(
+                DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        MappingJackson2HttpMessageConverter halConverter = new TypeConstrainedMappingJackson2HttpMessageConverter(ResourceSupport.class);
+        halConverter.setObjectMapper(objectMapper);
+        return halConverter;
     }
 
     private HttpEntity<String> getStringRequest() {
